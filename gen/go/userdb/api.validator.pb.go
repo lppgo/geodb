@@ -27,6 +27,16 @@ func (this *Account) Validate() error {
 	return nil
 }
 func (this *Payment) Validate() error {
+	for _, item := range this.Subscriptions {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Subscriptions", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *Subscription) Validate() error {
 	return nil
 }
 

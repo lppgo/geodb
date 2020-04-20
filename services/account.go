@@ -44,8 +44,8 @@ func (p *UserDB) DeleteAccount(ctx context.Context, r *api.DeleteAccountRequest)
 	return &api.DeleteAccountResponse{}, nil
 }
 
-func (p *UserDB) SetAccountPlan(ctx context.Context, r *api.SetAccountPlanRequest) (*api.SetAccountPlanResponse, error) {
-	acc, err := db.SetAccountPlan(p.db, r.AccountName, r.Plan)
+func (p *UserDB) AddAccountPlan(ctx context.Context, r *api.SetAccountPlanRequest) (*api.SetAccountPlanResponse, error) {
+	acc, err := db.AddAccountPlan(p.db, r.AccountName, r.Plan)
 	if err != nil {
 		return nil, err
 	}

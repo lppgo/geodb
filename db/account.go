@@ -32,9 +32,16 @@ func NewAccount(db *badger.DB, name, adminEmail string, meta map[string]string) 
 	if err != nil {
 		return nil, err
 	}
-	acc.Payment.Plan = cust.Subscriptions.Data[0].Plan.ID
-	acc.Payment.Product = cust.Subscriptions.Data[0].Plan.Product.ID
-	acc.Payment.CustomerId = cust.ID
+	acc.Payment = &api.Payment{
+		CustomerId: cust.ID,
+	}
+	for _, sub := range cust.Subscriptions.Data {
+		acc.Payment.Subscriptions = append(acc.Payment.Subscriptions, &api.Subscription{
+			Subscription: sub.ID,
+			Plan:         sub.Plan.ID,
+			Product:      sub.Plan.Product.ID,
+		})
+	}
 	bits, err := proto.Marshal(acc)
 	if err != nil {
 		return nil, err
@@ -152,7 +159,7 @@ func DeleteAccount(db *badger.DB, names []string) error {
 	return nil
 }
 
-func SetAccountPlan(db *badger.DB, accountName, plan string) (*api.Account, error) {
+func AddAccountPlan(db *badger.DB, accountName, plan string) (*api.Account, error) {
 	txn := db.NewTransaction(true)
 	defer txn.Discard()
 	i, err := txn.Get([]byte(accountName))
@@ -177,8 +184,19 @@ func SetAccountPlan(db *badger.DB, accountName, plan string) (*api.Account, erro
 	if err != nil {
 		return nil, err
 	}
-	acc.Payment.Plan = cust.Subscriptions.Data[0].Plan.ID
-	acc.Payment.Product = cust.Subscriptions.Data[0].Plan.Product.ID
+	if acc.Payment == nil {
+		acc.Payment = &api.Payment{
+			CustomerId: cust.ID,
+		}
+	}
+	for _, sub := range cust.Subscriptions.Data {
+		acc.Payment.Subscriptions = append(acc.Payment.Subscriptions, &api.Subscription{
+			Subscription: sub.ID,
+			Plan:         sub.Plan.ID,
+			Product:      sub.Plan.Product.ID,
+		})
+	}
+
 	bits, err := proto.Marshal(acc)
 	if err != nil {
 		return nil, err

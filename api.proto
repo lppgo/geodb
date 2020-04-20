@@ -25,7 +25,7 @@ service UserDB {
     rpc GetAccount(GetAccountRequest) returns(GetAccountResponse){};
     rpc GetAccountRegex(GetAccountRegexRequest) returns(GetAccountRegexResponse){};
     rpc DeleteAccount(DeleteAccountRequest) returns(DeleteAccountResponse){};
-    rpc SetAccountPlan(SetAccountPlanRequest) returns(SetAccountPlanResponse){};
+    rpc AddAccountPlan(SetAccountPlanRequest) returns(SetAccountPlanResponse){};
     rpc SetAccountSource(SetAccountSourceRequest) returns(SetAccountSourceResponse){};
     rpc GetAccountNames(GetAccountNamesRequest) returns(GetAccountNamesResponse){};
     rpc GetAccountNamesRegex(GetAccountNamesRegexRequest) returns(GetAccountNamesRegexResponse){};
@@ -44,8 +44,13 @@ message Account {
 
 message Payment {
     string customer_id =1;
+    repeated Subscription subscriptions = 2;
+}
+
+message Subscription {
+    string subscription =1;
     string plan =2;
-    string product =4;
+    string product =3;
 }
 
 //UserDetail is an enhanced view of an User containing a human readable address and the users latest tracking information
