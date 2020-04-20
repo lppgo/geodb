@@ -91,6 +91,86 @@ func Set(db *badger.DB, hub *stream.Hub, obj *api.UserDetail) (*api.UserDetail, 
 	return detail, nil
 }
 
+func SetSource(db *badger.DB, hub *stream.Hub, email, source string) (*api.UserDetail, error) {
+	txn := db.NewTransaction(true)
+	defer txn.Discard()
+	item, err := txn.Get([]byte(email))
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	res, err := item.ValueCopy(nil)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	var obj = &api.UserDetail{}
+	if err := proto.Unmarshal(res, obj); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to unmarshal protobuf: %s", err.Error())
+	}
+	if err := obj.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if obj.UpdatedUnix == 0 {
+		obj.UpdatedUnix = time.Now().Unix()
+	}
+	obj.Payment.Source = source
+	bits, err := proto.Marshal(obj)
+	if err != nil {
+		return nil, err
+	}
+	if err := txn.SetEntry(&badger.Entry{
+		Key:      []byte(obj.Email),
+		Value:    bits,
+		UserMeta: 1,
+	}); err != nil {
+		return nil, err
+	}
+	if err := txn.Commit(); err != nil {
+		return nil, err
+	}
+	hub.PublishObject(obj)
+	return obj, nil
+}
+
+func SetPlan(db *badger.DB, hub *stream.Hub, email, plan string) (*api.UserDetail, error) {
+	txn := db.NewTransaction(true)
+	defer txn.Discard()
+	item, err := txn.Get([]byte(email))
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	res, err := item.ValueCopy(nil)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	var obj = &api.UserDetail{}
+	if err := proto.Unmarshal(res, obj); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to unmarshal protobuf: %s", err.Error())
+	}
+	if err := obj.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if obj.UpdatedUnix == 0 {
+		obj.UpdatedUnix = time.Now().Unix()
+	}
+	obj.Payment.Plan = plan
+	bits, err := proto.Marshal(obj)
+	if err != nil {
+		return nil, err
+	}
+	if err := txn.SetEntry(&badger.Entry{
+		Key:      []byte(obj.Email),
+		Value:    bits,
+		UserMeta: 1,
+	}); err != nil {
+		return nil, err
+	}
+	if err := txn.Commit(); err != nil {
+		return nil, err
+	}
+	hub.PublishObject(obj)
+	return obj, nil
+}
+
 func Get(db *badger.DB, keys []string) (map[string]*api.UserDetail, error) {
 	txn := db.NewTransaction(false)
 	defer txn.Discard()

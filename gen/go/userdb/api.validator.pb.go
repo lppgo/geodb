@@ -101,6 +101,28 @@ func (this *SetResponse) Validate() error {
 	}
 	return nil
 }
+func (this *SetSourceRequest) Validate() error {
+	return nil
+}
+func (this *SetSourceResponse) Validate() error {
+	if this.User != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
+		}
+	}
+	return nil
+}
+func (this *SetPlanRequest) Validate() error {
+	return nil
+}
+func (this *SetPlanResponse) Validate() error {
+	if this.User != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
+		}
+	}
+	return nil
+}
 func (this *GetEmailsRequest) Validate() error {
 	return nil
 }

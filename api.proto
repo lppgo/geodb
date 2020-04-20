@@ -12,6 +12,8 @@ service UserDB {
     rpc Login(LoginRequest) returns(LoginResponse){};
     //Set - input: an user output: an user detail. User details are enhanced when the google maps integration is active
     rpc Set(SetRequest) returns(SetResponse){};
+    rpc SetPlan(SetPlanRequest) returns(SetPlanResponse){};
+    rpc SetSource(SetSourceRequest) returns(SetSourceResponse){};
     //Get - input: an array of user emails, output: returns an array of current user details
     rpc Get(GetRequest) returns(GetResponse){};
     //GetRegex - input: a regex string, output: returns an array of current user details with emails that match the regex pattern
@@ -41,8 +43,8 @@ message UserDetail {
 
 message Payment {
     string customer_id =1;
-    string plan_id =2;
-    string source_id =3;
+    string plan =2;
+    string source =3;
 }
 
 message StreamRequest {
@@ -80,6 +82,24 @@ message SetRequest {
 }
 
 message SetResponse {
+    UserDetail user= 1;
+}
+
+message SetSourceRequest {
+    string email =1;
+    string source= 2;
+}
+
+message SetSourceResponse {
+    UserDetail user= 1;
+}
+
+message SetPlanRequest {
+    string email =1;
+    string plan= 2;
+}
+
+message SetPlanResponse {
     UserDetail user= 1;
 }
 

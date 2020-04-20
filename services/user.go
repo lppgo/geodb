@@ -24,6 +24,32 @@ func (p *UserDB) Set(ctx context.Context, r *api.SetRequest) (*api.SetResponse, 
 	}, nil
 }
 
+func (p *UserDB) SetSource(ctx context.Context, r *api.SetSourceRequest) (*api.SetSourceResponse, error) {
+	if err := r.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	objects, err := db.SetSource(p.db, p.hub, r.Email, r.Source)
+	if err != nil {
+		return nil, err
+	}
+	return &api.SetSourceResponse{
+		User: objects,
+	}, nil
+}
+
+func (p *UserDB) SetPlan(ctx context.Context, r *api.SetPlanRequest) (*api.SetPlanResponse, error) {
+	if err := r.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	objects, err := db.SetPlan(p.db, p.hub, r.Email, r.Plan)
+	if err != nil {
+		return nil, err
+	}
+	return &api.SetPlanResponse{
+		User: objects,
+	}, nil
+}
+
 func (p *UserDB) GetRegex(ctx context.Context, r *api.GetRegexRequest) (*api.GetRegexResponse, error) {
 	objects, err := db.GetRegex(p.db, r.Regex)
 	if err != nil {
