@@ -35,6 +35,8 @@ service UserDB {
 
     rpc IncAccountPlanUsage(IncAccountPlanUsageRequest) returns(IncAccountPlanUsageResponse){};
     rpc ChargeAccount(ChargeAccountRequest) returns(ChargeAccountResponse){};
+    rpc UpdateCharge(UpdateChargeRequest) returns(UpdateChargeResponse){};
+    rpc RefundCharge(RefundChargeRequest) returns(RefundChargeResponse){};
 }
 
 message Account {
@@ -225,4 +227,23 @@ message ChargeAccountRequest {
 
 message ChargeAccountResponse {
     string charge_id =1;
+}
+
+message UpdateChargeRequest {
+    string chargeID =1 [(validator.field) = {regex: "^.{1,225}$"}];
+    int64 amount =2 [(validator.field) = {int_gt : 0}];
+    string description =3;
+    map<string, string>  metadata =4;
+}
+
+message UpdateChargeResponse {
+    string charge_id =1;
+}
+
+message RefundChargeRequest {
+    string chargeID =1 [(validator.field) = {regex: "^.{1,225}$"}];
+}
+
+message RefundChargeResponse {
+    bool refunded =1;
 }

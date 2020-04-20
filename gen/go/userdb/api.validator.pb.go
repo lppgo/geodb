@@ -322,3 +322,31 @@ func (this *ChargeAccountRequest) Validate() error {
 func (this *ChargeAccountResponse) Validate() error {
 	return nil
 }
+
+var _regex_UpdateChargeRequest_ChargeID = regexp.MustCompile(`^.{1,225}$`)
+
+func (this *UpdateChargeRequest) Validate() error {
+	if !_regex_UpdateChargeRequest_ChargeID.MatchString(this.ChargeID) {
+		return github_com_mwitkow_go_proto_validators.FieldError("ChargeID", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.ChargeID))
+	}
+	if !(this.Amount > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Amount", fmt.Errorf(`value '%v' must be greater than '0'`, this.Amount))
+	}
+	// Validation of proto3 map<> fields is unsupported.
+	return nil
+}
+func (this *UpdateChargeResponse) Validate() error {
+	return nil
+}
+
+var _regex_RefundChargeRequest_ChargeID = regexp.MustCompile(`^.{1,225}$`)
+
+func (this *RefundChargeRequest) Validate() error {
+	if !_regex_RefundChargeRequest_ChargeID.MatchString(this.ChargeID) {
+		return github_com_mwitkow_go_proto_validators.FieldError("ChargeID", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.ChargeID))
+	}
+	return nil
+}
+func (this *RefundChargeResponse) Validate() error {
+	return nil
+}

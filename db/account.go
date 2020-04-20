@@ -238,6 +238,7 @@ func SetAccountSource(db *badger.DB, accountName, source string) (*api.Account, 
 		}
 		return params, nil
 	})
+	acc.Payment.HasSource = true
 	if err != nil {
 		return nil, err
 	}
@@ -392,4 +393,29 @@ func ChargeAccount(db *badger.DB, amount int64, accountName, description string,
 		return "", err
 	}
 	return charge.ID, nil
+}
+
+func UpdateCharge(chargeID, description string, amount int64, meta map[string]string) (string, error) {
+	charge, err := stripe.UpdateCharge(chargeID, func(params *stripe2.ChargeParams) (params2 *stripe2.ChargeParams, err error) {
+		params.Amount = &amount
+		params.Metadata = meta
+		if description != "" {
+			params.Description = &description
+		}
+		return params, nil
+	})
+	if err != nil {
+		return "", err
+	}
+	return charge.ID, nil
+}
+
+func RefundCharge(chargeID string) (bool, error) {
+	if err := stripe.RefundCharge(func(params *stripe2.RefundParams) (params2 *stripe2.RefundParams, err error) {
+		params.Charge = &chargeID
+		return params, nil
+	}); err != nil {
+		return false, err
+	}
+	return true, nil
 }

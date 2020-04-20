@@ -100,3 +100,23 @@ func (p *UserDB) ChargeAccount(ctx context.Context, r *api.ChargeAccountRequest)
 		ChargeId: chargeID,
 	}, nil
 }
+
+func (p *UserDB) UpdateCharge(ctx context.Context, r *api.UpdateChargeRequest) (*api.UpdateChargeResponse, error) {
+	charge, err := db.UpdateCharge(r.ChargeID, r.Description, r.Amount, r.Metadata)
+	if err != nil {
+		return nil, err
+	}
+	return &api.UpdateChargeResponse{
+		ChargeId: charge,
+	}, nil
+}
+
+func (p *UserDB) RefundCharge(ctx context.Context, r *api.RefundChargeRequest) (*api.RefundChargeResponse, error) {
+	_, err := db.RefundCharge(r.ChargeID)
+	if err != nil {
+		return nil, err
+	}
+	return &api.RefundChargeResponse{
+		Refunded: true,
+	}, nil
+}
