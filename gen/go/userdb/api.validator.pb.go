@@ -290,3 +290,9 @@ func (this *SetUserAccountResponse) Validate() error {
 	}
 	return nil
 }
+func (this *IncAccountPlanUsageRequest) Validate() error {
+	return nil
+}
+func (this *IncAccountPlanUsageResponse) Validate() error {
+	return nil
+}

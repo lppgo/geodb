@@ -83,3 +83,10 @@ func (p *UserDB) GetAccountNamesRegex(ctx context.Context, r *api.GetAccountName
 		Names: acc,
 	}, nil
 }
+
+func (p *UserDB) IncAccountPlanUsage(ctx context.Context, r *api.IncAccountPlanUsageRequest) (*api.IncAccountPlanUsageResponse, error) {
+	if err := db.IncAccountPlanUsage(p.db, r.Increment, r.AccountName, r.Plan); err != nil {
+		return nil, err
+	}
+	return &api.IncAccountPlanUsageResponse{}, nil
+}

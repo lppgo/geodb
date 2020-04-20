@@ -31,7 +31,8 @@ service UserDB {
     rpc GetAccountNamesRegex(GetAccountNamesRegexRequest) returns(GetAccountNamesRegexResponse){};
     
     rpc SetUserAccount(SetUserAccountRequest) returns(SetUserAccountResponse){};
-  
+
+    rpc IncAccountPlanUsage(IncAccountPlanUsageRequest) returns(IncAccountPlanUsageResponse){};
 }
 
 message Account {
@@ -51,6 +52,7 @@ message Subscription {
     string subscription =1;
     string plan =2;
     string product =3;
+    string item =4;
 }
 
 //UserDetail is an enhanced view of an User containing a human readable address and the users latest tracking information
@@ -212,4 +214,13 @@ message SetUserAccountRequest {
 
 message SetUserAccountResponse {
     UserDetail user =1;
+}
+
+message IncAccountPlanUsageRequest {
+    int64 increment =1;
+    string account_name =2;
+    string plan =3;
+}
+
+message IncAccountPlanUsageResponse {
 }

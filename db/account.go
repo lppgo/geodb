@@ -299,3 +299,47 @@ func GetAccountNamesRegex(db *badger.DB, regex string) ([]string, error) {
 	iter.Close()
 	return keys, nil
 }
+
+func IncAccountPlanUsage(db *badger.DB, increment int64, accountName, plan string) error {
+	txn := db.NewTransaction(true)
+	defer txn.Discard()
+	i, err := txn.Get([]byte(accountName))
+	if err != nil {
+		return status.Errorf(codes.InvalidArgument, "failed to get key: %s", err.Error())
+	}
+	if i.UserMeta() != 2 {
+		return err
+	}
+	res, err := i.ValueCopy(nil)
+	if err != nil {
+		return status.Errorf(codes.Internal, "failed to copy data: %s", err.Error())
+	}
+	var acc = &api.Account{}
+	if err := proto.Unmarshal(res, acc); err != nil {
+		return status.Errorf(codes.Internal, "(all) failed to unmarshal protobuf: %s", err.Error())
+	}
+	err = stripe.UpdateUsage(func(params *stripe2.UsageRecordParams) (params2 *stripe2.UsageRecordParams, err error) {
+		params.SubscriptionItem = &plan
+		params.Quantity = &increment
+		params.Timestamp = stripe2.Int64(time.Now().Unix())
+		return params, nil
+	})
+	if err != nil {
+		return err
+	}
+	bits, err := proto.Marshal(acc)
+	if err != nil {
+		return err
+	}
+	if err := txn.SetEntry(&badger.Entry{
+		Key:      []byte(acc.Name),
+		Value:    bits,
+		UserMeta: 2,
+	}); err != nil {
+		return err
+	}
+	if err := txn.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
