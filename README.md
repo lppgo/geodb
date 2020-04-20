@@ -39,7 +39,7 @@ GeoDB is a persistant geospatial database built using [Badger](https://github.co
 - Food Delivery
 - Asset Tracking
 
-## Clint SDKs
+## Client SDKs
 
 Please refer to a client SDK for **examples and codes snippets**
 - [Golang](https://github.com/autom8ter/geodb-go)
