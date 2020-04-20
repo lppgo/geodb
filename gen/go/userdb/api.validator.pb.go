@@ -58,43 +58,13 @@ func (this *UserDetail) Validate() error {
 	}
 	return nil
 }
-func (this *StreamRequest) Validate() error {
-	return nil
-}
-func (this *StreamResponse) Validate() error {
-	if this.User != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
-		}
-	}
-	return nil
-}
 
-var _regex_StreamRegexRequest_Regex = regexp.MustCompile(`^.{1,225}$`)
+var _regex_LoginRequest_Code = regexp.MustCompile(`^.{1,225}$`)
 
-func (this *StreamRegexRequest) Validate() error {
-	if !_regex_StreamRegexRequest_Regex.MatchString(this.Regex) {
-		return github_com_mwitkow_go_proto_validators.FieldError("Regex", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Regex))
-	}
-	return nil
-}
-func (this *StreamRegexResponse) Validate() error {
-	if this.User != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
-		}
-	}
-	return nil
-}
-func (this *StreamPrefixResponse) Validate() error {
-	if this.User != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
-		}
-	}
-	return nil
-}
 func (this *LoginRequest) Validate() error {
+	if !_regex_LoginRequest_Code.MatchString(this.Code) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Code", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Code))
+	}
 	return nil
 }
 func (this *LoginResponse) Validate() error {
@@ -105,7 +75,13 @@ func (this *LoginResponse) Validate() error {
 	}
 	return nil
 }
+
+var _regex_LoginJWTRequest_Jwt = regexp.MustCompile(`^.{1,225}$`)
+
 func (this *LoginJWTRequest) Validate() error {
+	if !_regex_LoginJWTRequest_Jwt.MatchString(this.Jwt) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Jwt", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Jwt))
+	}
 	return nil
 }
 func (this *LoginJWTResponse) Validate() error {
@@ -182,7 +158,17 @@ func (this *PingRequest) Validate() error {
 func (this *PingResponse) Validate() error {
 	return nil
 }
+
+var _regex_NewAccountRequest_Name = regexp.MustCompile(`^.{1,225}$`)
+var _regex_NewAccountRequest_AdminEmail = regexp.MustCompile(`^.{1,225}$`)
+
 func (this *NewAccountRequest) Validate() error {
+	if !_regex_NewAccountRequest_Name.MatchString(this.Name) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Name))
+	}
+	if !_regex_NewAccountRequest_AdminEmail.MatchString(this.AdminEmail) {
+		return github_com_mwitkow_go_proto_validators.FieldError("AdminEmail", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.AdminEmail))
+	}
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
@@ -301,7 +287,20 @@ func (this *SetUserAccountResponse) Validate() error {
 	}
 	return nil
 }
+
+var _regex_IncAccountPlanUsageRequest_AccountName = regexp.MustCompile(`^.{1,225}$`)
+var _regex_IncAccountPlanUsageRequest_Plan = regexp.MustCompile(`^.{1,225}$`)
+
 func (this *IncAccountPlanUsageRequest) Validate() error {
+	if !(this.Increment > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Increment", fmt.Errorf(`value '%v' must be greater than '0'`, this.Increment))
+	}
+	if !_regex_IncAccountPlanUsageRequest_AccountName.MatchString(this.AccountName) {
+		return github_com_mwitkow_go_proto_validators.FieldError("AccountName", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.AccountName))
+	}
+	if !_regex_IncAccountPlanUsageRequest_Plan.MatchString(this.Plan) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Plan", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Plan))
+	}
 	return nil
 }
 func (this *IncAccountPlanUsageResponse) Validate() error {

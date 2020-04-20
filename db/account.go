@@ -318,8 +318,18 @@ func IncAccountPlanUsage(db *badger.DB, increment int64, accountName, plan strin
 	if err := proto.Unmarshal(res, acc); err != nil {
 		return status.Errorf(codes.Internal, "(all) failed to unmarshal protobuf: %s", err.Error())
 	}
+	var item string
+	for _, sub := range acc.Payment.Subscriptions {
+		if sub.Plan == plan {
+			item = sub.Item
+			break
+		}
+	}
+	if item == "" {
+		return status.Errorf(codes.InvalidArgument, "user does not have plan: %s", plan)
+	}
 	err = stripe.UpdateUsage(func(params *stripe2.UsageRecordParams) (params2 *stripe2.UsageRecordParams, err error) {
-		params.SubscriptionItem = &plan
+		params.SubscriptionItem = &item
 		params.Quantity = &increment
 		params.Timestamp = stripe2.Int64(time.Now().Unix())
 		return params, nil
