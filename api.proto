@@ -9,6 +9,8 @@ service UserDB {
     //Ping - input: empty, output: returns ok if server is healthy.
     rpc Ping(PingRequest) returns(PingResponse){};
     //Set - input: an user output: an user detail. User details are enhanced when the google maps integration is active
+    rpc Login(LoginRequest) returns(LoginResponse){};
+    //Set - input: an user output: an user detail. User details are enhanced when the google maps integration is active
     rpc Set(SetRequest) returns(SetResponse){};
     //Get - input: an array of user emails, output: returns an array of current user details
     rpc Get(GetRequest) returns(GetResponse){};
@@ -28,23 +30,19 @@ service UserDB {
     rpc StreamRegex(StreamRegexRequest) returns(stream StreamRegexResponse){};
 }
 
-message User {
-    string email = 1 [(validator.field) = {regex: "^.{1,225}$"}];
-    string name = 2 [(validator.field) = {regex: "^.{1,225}$"}];
-    map<string, string> metadata =4; //optional metadata associated with the user
-    int64 expires_unix =5; //a unix timestamp in the future when the database should clean up the user. empty if no expiration.
-}
-
 //UserDetail is an enhanced view of an User containing a human readable address and the users latest tracking information
 message UserDetail {
-    User user =1;
-    Payment payment =2;
-    int64 updated_unix =3; //unix timestamp representing last update (optional)
+    string email = 1 [(validator.field) = {regex: "^.{1,225}$"}];
+    string name = 2 [(validator.field) = {regex: "^.{1,225}$"}];
+    map<string, string> metadata =3; //optional metadata associated with the user
+    Payment payment =4;
+    int64 updated_unix =5; //unix timestamp representing last update (optional)
 }
-
 
 message Payment {
     string customer_id =1;
+    string plan_id =2;
+    string source_id =3;
 }
 
 message StreamRequest {
@@ -69,8 +67,16 @@ message StreamPrefixResponse {
     UserDetail user =1;
 }
 
+message LoginRequest {
+   string code =1;
+}
+
+message LoginResponse {
+    UserDetail user =1;
+}
+
 message SetRequest {
-    User user =1 [(validator.field) = {msg_exists : true}];
+    UserDetail user= 1;
 }
 
 message SetResponse {

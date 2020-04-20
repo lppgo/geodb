@@ -13,7 +13,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	s.Setup(func(server *server.Server) error {
-		api.RegisterUserDBServer(s.GetGRPCServer(), services.NewUserDB(s.GetDB(), s.GetStream()))
+		api.RegisterUserDBServer(s.GetGRPCServer(), services.NewUserDB(s.GetDB(), s.GetStream(), s.GetOAuth()))
 		return nil
 	})
 	s.Run()

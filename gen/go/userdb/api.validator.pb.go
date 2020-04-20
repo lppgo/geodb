@@ -17,25 +17,25 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-var _regex_User_Email = regexp.MustCompile(`^.{1,225}$`)
-var _regex_User_Name = regexp.MustCompile(`^.{1,225}$`)
+var _regex_UserDetail_Email = regexp.MustCompile(`^.{1,225}$`)
+var _regex_UserDetail_Name = regexp.MustCompile(`^.{1,225}$`)
 
-func (this *User) Validate() error {
-	if !_regex_User_Email.MatchString(this.Email) {
+func (this *UserDetail) Validate() error {
+	if !_regex_UserDetail_Email.MatchString(this.Email) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Email", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Email))
 	}
-	if !_regex_User_Name.MatchString(this.Name) {
+	if !_regex_UserDetail_Name.MatchString(this.Name) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Name))
 	}
 	// Validation of proto3 map<> fields is unsupported.
-	return nil
-}
-func (this *UserDetail) Validate() error {
-	if this.User != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
+	if this.Payment != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Payment); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Payment", err)
 		}
 	}
+	return nil
+}
+func (this *Payment) Validate() error {
 	return nil
 }
 func (this *StreamRequest) Validate() error {
@@ -74,10 +74,18 @@ func (this *StreamPrefixResponse) Validate() error {
 	}
 	return nil
 }
-func (this *SetRequest) Validate() error {
-	if nil == this.User {
-		return github_com_mwitkow_go_proto_validators.FieldError("User", fmt.Errorf("message must exist"))
+func (this *LoginRequest) Validate() error {
+	return nil
+}
+func (this *LoginResponse) Validate() error {
+	if this.User != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
+		}
 	}
+	return nil
+}
+func (this *SetRequest) Validate() error {
 	if this.User != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("User", err)

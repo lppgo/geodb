@@ -21,6 +21,7 @@ require (
 	github.com/stripe/stripe-go v70.15.0+incompatible
 	github.com/thoas/go-funk v0.6.0
 	github.com/valyala/fasttemplate v1.1.0 // indirect
+	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
 	google.golang.org/grpc v1.28.1
 )

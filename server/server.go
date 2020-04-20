@@ -20,6 +20,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"github.com/soheilhy/cmux"
+	stripe2 "github.com/stripe/stripe-go"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"net"
@@ -34,6 +37,7 @@ type Server struct {
 	db         *badger.DB
 	hTTPClient *http.Client
 	logger     *log.Logger
+	config     *oauth2.Config
 }
 
 func (s *Server) GetGRPCServer() *grpc.Server {
@@ -42,6 +46,10 @@ func (s *Server) GetGRPCServer() *grpc.Server {
 
 func (s *Server) GetDB() *badger.DB {
 	return s.db
+}
+
+func (s *Server) GetOAuth() *oauth2.Config {
+	return s.config
 }
 
 func (s *Server) GetStream() *stream.Hub {
@@ -56,17 +64,25 @@ func (s *Server) GetLogger() *log.Logger {
 	return s.logger
 }
 
-func GetDeps() (*badger.DB, *stream.Hub,  error) {
+func GetDeps() (*badger.DB, *stream.Hub, *oauth2.Config, error) {
+	stripe2.Key = config.Config.GetString("USERDB_STRIPE_KEY")
 	db, err := badger.Open(badger.DefaultOptions(config.Config.GetString("USERDB_PATH")))
 	if err != nil {
-		return nil, nil,  err
+		return nil, nil, nil, err
 	}
 	hub := stream.NewHub()
-	return db, hub, nil
+	cfg := &oauth2.Config{
+		ClientID:     config.Config.GetString("USERDB_GOOGLE_CLIENT_ID"),
+		ClientSecret: config.Config.GetString("USERDB_GOOGLE_CLIENT_SECRET"),
+		Endpoint:     google.Endpoint,
+		RedirectURL:  config.Config.GetString("USERDB_GOOGLE_REDIRECT"),
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
+	}
+	return db, hub, cfg, nil
 }
 
 func NewServer() (*Server, error) {
-	db, hub, err := GetDeps()
+	db, hub, cfg, err := GetDeps()
 	if err != nil {
 		return nil, err
 	}
@@ -98,6 +114,7 @@ func NewServer() (*Server, error) {
 		hTTPClient: http.DefaultClient,
 		logger:     log.New(),
 		streamHub:  hub,
+		config:     cfg,
 	}
 	s.router.Use(
 		middleware.Recover(),

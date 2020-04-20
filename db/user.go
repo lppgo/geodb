@@ -1,36 +1,86 @@
 package db
 
 import (
+	"github.com/autom8ter/userdb/auth"
 	api "github.com/autom8ter/userdb/gen/go/userdb"
 	"github.com/autom8ter/userdb/stream"
+	"github.com/autom8ter/userdb/stripe"
 	"github.com/dgraph-io/badger/v2"
 	"github.com/gogo/protobuf/proto"
+	stripe2 "github.com/stripe/stripe-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"regexp"
 	"time"
 )
 
-func Set(db *badger.DB, hub *stream.Hub, obj *api.User) (*api.UserDetail, error) {
+func Login(db *badger.DB, hub *stream.Hub, usr *auth.GoogleUser) (*api.UserDetail, error) {
+	txn := db.NewTransaction(true)
+	defer txn.Discard()
+	item, err := txn.Get([]byte(usr.Email))
+	if err == nil && item != nil && item.UserMeta() == 1 {
+		res, err := item.ValueCopy(nil)
+		if err != nil {
+			return nil, err
+		}
+		var detail = &api.UserDetail{}
+		if err := proto.Unmarshal(res, detail); err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to unmarshal protobuf: %s", err.Error())
+		}
+		return detail, nil
+	}
+	detail := &api.UserDetail{
+		Email:       usr.Email,
+		Name:        usr.Name,
+		UpdatedUnix: time.Now().Unix(),
+	}
+	cust, err := stripe.NewCustomer(func(params *stripe2.CustomerParams) (params2 *stripe2.CustomerParams, err error) {
+		params.Email = stripe2.String(detail.Email)
+		params.Name = stripe2.String(detail.Name)
+		return params, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	detail.Payment = &api.Payment{
+		CustomerId: cust.ID,
+	}
+	bits, err := proto.Marshal(detail)
+	if err != nil {
+		return nil, err
+	}
+	if err := txn.SetEntry(&badger.Entry{
+		Key:      []byte(detail.Email),
+		Value:    bits,
+		UserMeta: 1,
+	}); err != nil {
+		return nil, err
+	}
+	if err := txn.Commit(); err != nil {
+		return nil, err
+	}
+	hub.PublishObject(detail)
+	return detail, nil
+}
+
+func Set(db *badger.DB, hub *stream.Hub, obj *api.UserDetail) (*api.UserDetail, error) {
 	if err := obj.Validate(); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	if obj.UpdatedUnix == 0 {
 		obj.UpdatedUnix = time.Now().Unix()
 	}
-	detail := &api.UserDetail{
-		User: obj,
-	}
+	detail := obj
 	bits, err := proto.Marshal(detail)
 	if err != nil {
 		return nil, err
 	}
 	txn := db.NewTransaction(true)
+	defer txn.Discard()
 	if err := txn.SetEntry(&badger.Entry{
-		Key:       []byte(obj.Email),
-		Value:     bits,
-		UserMeta:  1,
-		ExpiresAt: uint64(obj.ExpiresUnix),
+		Key:      []byte(obj.Email),
+		Value:    bits,
+		UserMeta: 1,
 	}); err != nil {
 		return nil, err
 	}

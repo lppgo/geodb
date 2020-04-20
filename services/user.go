@@ -2,8 +2,11 @@ package services
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/autom8ter/userdb/auth"
 	"github.com/autom8ter/userdb/db"
 	api "github.com/autom8ter/userdb/gen/go/userdb"
+	"golang.org/x/oauth2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -46,4 +49,29 @@ func (p *UserDB) Delete(ctx context.Context, r *api.DeleteRequest) (*api.DeleteR
 		return nil, err
 	}
 	return &api.DeleteResponse{}, nil
+}
+
+func (p *UserDB) Login(ctx context.Context, r *api.LoginRequest) (*api.LoginResponse, error) {
+	const authURL = "https://www.googleapis.com/oauth2/v2/userinfo"
+	token, err := p.config.Exchange(ctx, r.Code, oauth2.AccessTypeOnline)
+	if err != nil {
+		return nil, err
+	}
+	client := p.config.Client(ctx, token)
+	resp, err := client.Get(authURL)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	usr := &auth.GoogleUser{}
+	if err := json.NewDecoder(resp.Body).Decode(usr); err != nil {
+		return nil, err
+	}
+	dbUser, err := db.Login(p.db, p.hub, usr)
+	if err != nil {
+		return nil, err
+	}
+	return &api.LoginResponse{
+		User: dbUser,
+	}, nil
 }
