@@ -12,7 +12,7 @@ UserDB is a persistant geospatial database built using [Badger](https://github.c
 - [x] Persistent User Storage
 - [x] gRPC Protocol
 - [x] Prometheus Metrics (/metrics endpoint)
-- [x] User Creation timeseries exposed with Prometheus metrics
+- [ ] User Creation timeseries exposed with Prometheus metrics
 - [x] Configurable(12-factor)
 - [x] Basic Authentication
 - [x] Docker Image
