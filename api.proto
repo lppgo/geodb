@@ -30,7 +30,7 @@ service UserDB {
     rpc GetAccountNames(GetAccountNamesRequest) returns(GetAccountNamesResponse){};
     rpc GetAccountNamesRegex(GetAccountNamesRegexRequest) returns(GetAccountNamesRegexResponse){};
     
-    
+    rpc SetUserAccount(SetUserAccountRequest) returns(SetUserAccountResponse){};
   
 }
 
