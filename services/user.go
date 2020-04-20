@@ -71,7 +71,28 @@ func (p *UserDB) Login(ctx context.Context, r *api.LoginRequest) (*api.LoginResp
 	if err != nil {
 		return nil, err
 	}
+	jwt, err := auth.NewUserJWT(dbUser.Email)
+	if err != nil {
+		return nil, err
+	}
 	return &api.LoginResponse{
 		User: dbUser,
+		Jwt:  jwt,
+	}, nil
+}
+
+func (p *UserDB) LoginJWT(ctx context.Context, r *api.LoginJWTRequest) (*api.LoginJWTResponse, error) {
+	usr, err := auth.UserFromJWT(r.Jwt, func(email string) (detail *api.UserDetail, err error) {
+		usr, err := db.Get(p.db, []string{email})
+		if err != nil {
+			return nil, err
+		}
+		return usr[email], nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &api.LoginJWTResponse{
+		User: usr,
 	}, nil
 }

@@ -5,6 +5,7 @@ go 1.12
 require (
 	cloud.google.com/go v0.56.0 // indirect
 	github.com/dgraph-io/badger/v2 v2.0.3
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.0

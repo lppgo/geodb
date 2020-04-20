@@ -10,6 +10,7 @@ service UserDB {
     rpc Ping(PingRequest) returns(PingResponse){};
     
     rpc Login(LoginRequest) returns(LoginResponse){};
+    rpc LoginJWT(LoginJWTRequest) returns(LoginJWTResponse){};
     //Get - input: an array of user emails, output: returns an array of current user details
     rpc Get(GetRequest) returns(GetResponse){};
     //GetRegex - input: a regex string, output: returns an array of current user details with emails that match the regex pattern
@@ -31,7 +32,6 @@ service UserDB {
     rpc GetAccountNamesRegex(GetAccountNamesRegexRequest) returns(GetAccountNamesRegexResponse){};
     
     rpc SetUserAccount(SetUserAccountRequest) returns(SetUserAccountResponse){};
-
     rpc IncAccountPlanUsage(IncAccountPlanUsageRequest) returns(IncAccountPlanUsageResponse){};
 }
 
@@ -91,6 +91,15 @@ message LoginRequest {
 }
 
 message LoginResponse {
+    UserDetail user =1;
+    string jwt =2;
+}
+
+message LoginJWTRequest {
+    string jwt =1;
+}
+
+message LoginJWTResponse {
     UserDetail user =1;
 }
 

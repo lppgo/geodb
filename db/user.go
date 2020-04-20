@@ -75,11 +75,11 @@ func Set(db *badger.DB, obj *api.UserDetail) (*api.UserDetail, error) {
 	return detail, nil
 }
 
-func Get(db *badger.DB, keys []string) (map[string]*api.UserDetail, error) {
+func Get(db *badger.DB, emails []string) (map[string]*api.UserDetail, error) {
 	txn := db.NewTransaction(false)
 	defer txn.Discard()
 	objects := map[string]*api.UserDetail{}
-	if len(keys) == 0 {
+	if len(emails) == 0 {
 		iter := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer iter.Close()
 		for iter.Rewind(); iter.Valid(); iter.Next() {
@@ -100,7 +100,7 @@ func Get(db *badger.DB, keys []string) (map[string]*api.UserDetail, error) {
 			}
 		}
 	} else {
-		for _, key := range keys {
+		for _, key := range emails {
 			i, err := txn.Get([]byte(key))
 			if err != nil {
 				return nil, status.Errorf(codes.InvalidArgument, "failed to get key: %s", err.Error())
