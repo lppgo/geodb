@@ -318,9 +318,12 @@ func IncAccountPlanUsage(db *badger.DB, increment int64, accountName, plan strin
 	if err := proto.Unmarshal(res, acc); err != nil {
 		return status.Errorf(codes.Internal, "(all) failed to unmarshal protobuf: %s", err.Error())
 	}
+	if acc.Payment == nil || acc.Payment.CustomerId == "" || !acc.Payment.HasSource {
+		return status.Errorf(codes.FailedPrecondition, "account %s does not have a payment method", acc.Name)
+	}
 	var item string
 	for _, sub := range acc.Payment.Subscriptions {
-		if sub.Plan == plan {
+		if sub.Plan != "" && sub.Plan == plan {
 			item = sub.Item
 			break
 		}
@@ -352,4 +355,41 @@ func IncAccountPlanUsage(db *badger.DB, increment int64, accountName, plan strin
 		return err
 	}
 	return nil
+}
+
+func ChargeAccount(db *badger.DB, amount int64, accountName, description string, meta map[string]string) (string, error) {
+	txn := db.NewTransaction(false)
+	defer txn.Discard()
+	i, err := txn.Get([]byte(accountName))
+	if err != nil {
+		return "", status.Errorf(codes.InvalidArgument, "failed to get key: %s", err.Error())
+	}
+	if i.UserMeta() != 2 {
+		return "", err
+	}
+	res, err := i.ValueCopy(nil)
+	if err != nil {
+		return "", status.Errorf(codes.Internal, "failed to copy data: %s", err.Error())
+	}
+	var acc = &api.Account{}
+	if err := proto.Unmarshal(res, acc); err != nil {
+		return "", status.Errorf(codes.Internal, "(all) failed to unmarshal protobuf: %s", err.Error())
+	}
+	if acc.Payment == nil || acc.Payment.CustomerId == "" || !acc.Payment.HasSource {
+		return "", status.Errorf(codes.FailedPrecondition, "account %s does not have a payment method", acc.Name)
+	}
+	charge, err := stripe.NewCharge(func(params *stripe2.ChargeParams) (params2 *stripe2.ChargeParams, err error) {
+		params.Amount = &amount
+		params.Currency = stripe2.String(string(stripe2.CurrencyUSD))
+		params.Customer = &acc.Payment.CustomerId
+		params.Metadata = meta
+		if description != "" {
+			params.Description = &description
+		}
+		return params, nil
+	})
+	if err != nil {
+		return "", err
+	}
+	return charge.ID, nil
 }

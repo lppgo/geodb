@@ -32,7 +32,9 @@ service UserDB {
     rpc GetAccountNamesRegex(GetAccountNamesRegexRequest) returns(GetAccountNamesRegexResponse){};
     
     rpc SetUserAccount(SetUserAccountRequest) returns(SetUserAccountResponse){};
+
     rpc IncAccountPlanUsage(IncAccountPlanUsageRequest) returns(IncAccountPlanUsageResponse){};
+    rpc ChargeAccount(ChargeAccountRequest) returns(ChargeAccountResponse){};
 }
 
 message Account {
@@ -45,7 +47,8 @@ message Account {
 
 message Payment {
     string customer_id =1;
-    repeated Subscription subscriptions = 2;
+    bool has_source =2;
+    repeated Subscription subscriptions = 3;
 }
 
 message Subscription {
@@ -205,10 +208,21 @@ message SetUserAccountResponse {
 }
 
 message IncAccountPlanUsageRequest {
-    int64 increment =1 [(validator.field) = {int_gt : 0}];
-    string account_name =2 [(validator.field) = {regex: "^.{1,225}$"}];
+    string account_name =1 [(validator.field) = {regex: "^.{1,225}$"}];
+    int64 increment =2 [(validator.field) = {int_gt : 0}];
     string plan =3 [(validator.field) = {regex: "^.{1,225}$"}];
 }
 
 message IncAccountPlanUsageResponse {
+}
+
+message ChargeAccountRequest {
+    string account_name =1 [(validator.field) = {regex: "^.{1,225}$"}];
+    int64 amount =2 [(validator.field) = {int_gt : 0}];
+    string description =3;
+    map<string, string>  metadata =4;
+}
+
+message ChargeAccountResponse {
+    string charge_id =1;
 }

@@ -90,3 +90,13 @@ func (p *UserDB) IncAccountPlanUsage(ctx context.Context, r *api.IncAccountPlanU
 	}
 	return &api.IncAccountPlanUsageResponse{}, nil
 }
+
+func (p *UserDB) ChargeAccount(ctx context.Context, r *api.ChargeAccountRequest) (*api.ChargeAccountResponse, error) {
+	chargeID, err := db.ChargeAccount(p.db, r.Amount, r.AccountName, r.Description, r.Metadata)
+	if err != nil {
+		return nil, err
+	}
+	return &api.ChargeAccountResponse{
+		ChargeId: chargeID,
+	}, nil
+}
