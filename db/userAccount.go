@@ -44,7 +44,7 @@ func SetUserAccount(db *badger.DB, userEmail string, accountName string) (*api.U
 			return nil, err
 		}
 	}
-	usr.Account = acc
+	usr.AccountName = acc.Name
 	bits, err := proto.Marshal(usr)
 	if err != nil {
 		return nil, err

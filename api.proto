@@ -65,7 +65,7 @@ message UserDetail {
     string email = 1 [(validator.field) = {regex: "^.{1,225}$"}];
     string name = 2 [(validator.field) = {regex: "^.{1,225}$"}];
     map<string, string> metadata =3; //optional metadata associated with the user
-    Account account =4; //optional
+    string account_name =4; //optional
     int64 updated_unix =5; //unix timestamp representing last update (optional)
 }
 

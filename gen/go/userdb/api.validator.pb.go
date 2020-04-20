@@ -51,11 +51,6 @@ func (this *UserDetail) Validate() error {
 		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Name))
 	}
 	// Validation of proto3 map<> fields is unsupported.
-	if this.Account != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Account); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Account", err)
-		}
-	}
 	return nil
 }
 
