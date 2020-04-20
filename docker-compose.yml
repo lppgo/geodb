@@ -1,17 +1,17 @@
 version: '3.7'
 services:
   db:
-    image: colemanword/geodb:latest
+    image: colemanword/userdb:latest
     env_file:
-      - geodb.env
+      - userdb.env
     ports:
       - "8080:8080"
     volumes:
-      - default:/tmp/geodb
+      - default:/tmp/userdb
     networks:
       default:
         aliases:
-          - geodb
+          - userdb
 networks:
   default:
 

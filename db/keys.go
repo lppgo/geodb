@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-func GetKeys(db *badger.DB) []string {
+func GetEmails(db *badger.DB) []string {
 	txn := db.NewTransaction(false)
 	defer txn.Discard()
 	keys := []string{}
@@ -25,25 +25,7 @@ func GetKeys(db *badger.DB) []string {
 	return keys
 }
 
-func GetPrefixKeys(db *badger.DB, prefix string) []string {
-	txn := db.NewTransaction(false)
-	defer txn.Discard()
-	keys := []string{}
-	opts := badger.DefaultIteratorOptions
-	opts.PrefetchValues = false
-	iter := txn.NewIterator(opts)
-	for iter.Seek([]byte(prefix)); iter.ValidForPrefix([]byte(prefix)); iter.Next() {
-		item := iter.Item()
-		if item.UserMeta() != 1 {
-			continue
-		}
-		keys = append(keys, string(item.Key()))
-	}
-	iter.Close()
-	return keys
-}
-
-func GetRegexKeys(db *badger.DB, regex string) ([]string, error) {
+func GetRegexEmails(db *badger.DB, regex string) ([]string, error) {
 	txn := db.NewTransaction(false)
 	defer txn.Discard()
 	keys := []string{}

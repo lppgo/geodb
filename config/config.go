@@ -6,10 +6,9 @@ import (
 
 func init() {
 	Config = viper.New()
-	Config.SetDefault("GEODB_PORT", ":8080")
-	Config.SetDefault("GEODB_PATH", "/tmp/geodb")
-	Config.SetDefault("GEODB_GC_INTERVAL", "5m")
-	Config.SetDefault("GEODB_GMAPS_CACHE_DURATION", "1h")
+	Config.SetDefault("USERDB_PORT", ":8090")
+	Config.SetDefault("USERDB_PATH", "/tmp/userdb")
+	Config.SetDefault("USERDB_GC_INTERVAL", "5m")
 	Config.AutomaticEnv()
 }
 

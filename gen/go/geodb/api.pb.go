@@ -2079,10 +2079,10 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// GeoDBClient is the client API for GeoDB service.
+// UserDBClient is the client API for UserDB service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type GeoDBClient interface {
+type UserDBClient interface {
 	//Ping - input: empty, output: returns ok if server is healthy.
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	//Set - input: an object output: an object detail. Object details are enhanced when the google maps integration is active
@@ -2103,13 +2103,13 @@ type GeoDBClient interface {
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	//Stream -  input: a clientID(optional) and an array of object keys(optional),
 	//output: a stream of object details for realtime, targetted object geolocation updates
-	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (GeoDB_StreamClient, error)
+	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (UserDB_StreamClient, error)
 	//StreamRegex -  input: a clientID(optional) a regex string,
 	//output: a stream of object details for realtime, targetted object geolocation updates that match the regex pattern
-	StreamRegex(ctx context.Context, in *StreamRegexRequest, opts ...grpc.CallOption) (GeoDB_StreamRegexClient, error)
+	StreamRegex(ctx context.Context, in *StreamRegexRequest, opts ...grpc.CallOption) (UserDB_StreamRegexClient, error)
 	//StreamPrefix -  input: a clientID(optional) a prefix string,
 	//output: a stream of object details for realtime, targetted object geolocation updates that match the prefix pattern
-	StreamPrefix(ctx context.Context, in *StreamPrefixRequest, opts ...grpc.CallOption) (GeoDB_StreamPrefixClient, error)
+	StreamPrefix(ctx context.Context, in *StreamPrefixRequest, opts ...grpc.CallOption) (UserDB_StreamPrefixClient, error)
 	//ScanBound -  input: a geolocation boundary, output: returns an array of current object details that are within the boundary
 	ScanBound(ctx context.Context, in *ScanBoundRequest, opts ...grpc.CallOption) (*ScanBoundResponse, error)
 	//ScanRegexBound -  input: a geolocation boundary, string-array of unique object ids(optional), output: returns an array of current object details that have keys that match the regex and are within the boundary and
@@ -2124,13 +2124,13 @@ type geoDBClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewGeoDBClient(cc *grpc.ClientConn) GeoDBClient {
+func NewUserDBClient(cc *grpc.ClientConn) UserDBClient {
 	return &geoDBClient{cc}
 }
 
 func (c *geoDBClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
 	out := new(PingResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/Ping", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/Ping", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2139,7 +2139,7 @@ func (c *geoDBClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.Ca
 
 func (c *geoDBClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
 	out := new(SetResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/Set", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/Set", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2148,7 +2148,7 @@ func (c *geoDBClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.Call
 
 func (c *geoDBClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2157,7 +2157,7 @@ func (c *geoDBClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.Call
 
 func (c *geoDBClient) GetRegex(ctx context.Context, in *GetRegexRequest, opts ...grpc.CallOption) (*GetRegexResponse, error) {
 	out := new(GetRegexResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/GetRegex", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/GetRegex", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2166,7 +2166,7 @@ func (c *geoDBClient) GetRegex(ctx context.Context, in *GetRegexRequest, opts ..
 
 func (c *geoDBClient) GetPrefix(ctx context.Context, in *GetPrefixRequest, opts ...grpc.CallOption) (*GetPrefixResponse, error) {
 	out := new(GetPrefixResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/GetPrefix", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/GetPrefix", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2175,7 +2175,7 @@ func (c *geoDBClient) GetPrefix(ctx context.Context, in *GetPrefixRequest, opts 
 
 func (c *geoDBClient) GetKeys(ctx context.Context, in *GetKeysRequest, opts ...grpc.CallOption) (*GetKeysResponse, error) {
 	out := new(GetKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/GetKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/GetKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2184,7 +2184,7 @@ func (c *geoDBClient) GetKeys(ctx context.Context, in *GetKeysRequest, opts ...g
 
 func (c *geoDBClient) GetRegexKeys(ctx context.Context, in *GetRegexKeysRequest, opts ...grpc.CallOption) (*GetRegexKeysResponse, error) {
 	out := new(GetRegexKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/GetRegexKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/GetRegexKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2193,7 +2193,7 @@ func (c *geoDBClient) GetRegexKeys(ctx context.Context, in *GetRegexKeysRequest,
 
 func (c *geoDBClient) GetPrefixKeys(ctx context.Context, in *GetPrefixKeysRequest, opts ...grpc.CallOption) (*GetPrefixKeysResponse, error) {
 	out := new(GetPrefixKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/GetPrefixKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/GetPrefixKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2202,15 +2202,15 @@ func (c *geoDBClient) GetPrefixKeys(ctx context.Context, in *GetPrefixKeysReques
 
 func (c *geoDBClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	out := new(DeleteResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *geoDBClient) Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (GeoDB_StreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_GeoDB_serviceDesc.Streams[0], "/api.GeoDB/Stream", opts...)
+func (c *geoDBClient) Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (UserDB_StreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_UserDB_serviceDesc.Streams[0], "/api.UserDB/Stream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2224,7 +2224,7 @@ func (c *geoDBClient) Stream(ctx context.Context, in *StreamRequest, opts ...grp
 	return x, nil
 }
 
-type GeoDB_StreamClient interface {
+type UserDB_StreamClient interface {
 	Recv() (*StreamResponse, error)
 	grpc.ClientStream
 }
@@ -2241,8 +2241,8 @@ func (x *geoDBStreamClient) Recv() (*StreamResponse, error) {
 	return m, nil
 }
 
-func (c *geoDBClient) StreamRegex(ctx context.Context, in *StreamRegexRequest, opts ...grpc.CallOption) (GeoDB_StreamRegexClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_GeoDB_serviceDesc.Streams[1], "/api.GeoDB/StreamRegex", opts...)
+func (c *geoDBClient) StreamRegex(ctx context.Context, in *StreamRegexRequest, opts ...grpc.CallOption) (UserDB_StreamRegexClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_UserDB_serviceDesc.Streams[1], "/api.UserDB/StreamRegex", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2256,7 +2256,7 @@ func (c *geoDBClient) StreamRegex(ctx context.Context, in *StreamRegexRequest, o
 	return x, nil
 }
 
-type GeoDB_StreamRegexClient interface {
+type UserDB_StreamRegexClient interface {
 	Recv() (*StreamRegexResponse, error)
 	grpc.ClientStream
 }
@@ -2273,8 +2273,8 @@ func (x *geoDBStreamRegexClient) Recv() (*StreamRegexResponse, error) {
 	return m, nil
 }
 
-func (c *geoDBClient) StreamPrefix(ctx context.Context, in *StreamPrefixRequest, opts ...grpc.CallOption) (GeoDB_StreamPrefixClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_GeoDB_serviceDesc.Streams[2], "/api.GeoDB/StreamPrefix", opts...)
+func (c *geoDBClient) StreamPrefix(ctx context.Context, in *StreamPrefixRequest, opts ...grpc.CallOption) (UserDB_StreamPrefixClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_UserDB_serviceDesc.Streams[2], "/api.UserDB/StreamPrefix", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2288,7 +2288,7 @@ func (c *geoDBClient) StreamPrefix(ctx context.Context, in *StreamPrefixRequest,
 	return x, nil
 }
 
-type GeoDB_StreamPrefixClient interface {
+type UserDB_StreamPrefixClient interface {
 	Recv() (*StreamPrefixResponse, error)
 	grpc.ClientStream
 }
@@ -2307,7 +2307,7 @@ func (x *geoDBStreamPrefixClient) Recv() (*StreamPrefixResponse, error) {
 
 func (c *geoDBClient) ScanBound(ctx context.Context, in *ScanBoundRequest, opts ...grpc.CallOption) (*ScanBoundResponse, error) {
 	out := new(ScanBoundResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/ScanBound", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/ScanBound", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2316,7 +2316,7 @@ func (c *geoDBClient) ScanBound(ctx context.Context, in *ScanBoundRequest, opts 
 
 func (c *geoDBClient) ScanRegexBound(ctx context.Context, in *ScanRegexBoundRequest, opts ...grpc.CallOption) (*ScanRegexBoundResponse, error) {
 	out := new(ScanRegexBoundResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/ScanRegexBound", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/ScanRegexBound", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2325,7 +2325,7 @@ func (c *geoDBClient) ScanRegexBound(ctx context.Context, in *ScanRegexBoundRequ
 
 func (c *geoDBClient) ScanPrefixBound(ctx context.Context, in *ScanPrefixBoundRequest, opts ...grpc.CallOption) (*ScanPrefixBoundResponse, error) {
 	out := new(ScanPrefixBoundResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/ScanPrefixBound", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/ScanPrefixBound", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2334,15 +2334,15 @@ func (c *geoDBClient) ScanPrefixBound(ctx context.Context, in *ScanPrefixBoundRe
 
 func (c *geoDBClient) GetPoint(ctx context.Context, in *GetPointRequest, opts ...grpc.CallOption) (*GetPointResponse, error) {
 	out := new(GetPointResponse)
-	err := c.cc.Invoke(ctx, "/api.GeoDB/GetPoint", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.UserDB/GetPoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GeoDBServer is the server API for GeoDB service.
-type GeoDBServer interface {
+// UserDBServer is the server API for UserDB service.
+type UserDBServer interface {
 	//Ping - input: empty, output: returns ok if server is healthy.
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	//Set - input: an object output: an object detail. Object details are enhanced when the google maps integration is active
@@ -2363,13 +2363,13 @@ type GeoDBServer interface {
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	//Stream -  input: a clientID(optional) and an array of object keys(optional),
 	//output: a stream of object details for realtime, targetted object geolocation updates
-	Stream(*StreamRequest, GeoDB_StreamServer) error
+	Stream(*StreamRequest, UserDB_StreamServer) error
 	//StreamRegex -  input: a clientID(optional) a regex string,
 	//output: a stream of object details for realtime, targetted object geolocation updates that match the regex pattern
-	StreamRegex(*StreamRegexRequest, GeoDB_StreamRegexServer) error
+	StreamRegex(*StreamRegexRequest, UserDB_StreamRegexServer) error
 	//StreamPrefix -  input: a clientID(optional) a prefix string,
 	//output: a stream of object details for realtime, targetted object geolocation updates that match the prefix pattern
-	StreamPrefix(*StreamPrefixRequest, GeoDB_StreamPrefixServer) error
+	StreamPrefix(*StreamPrefixRequest, UserDB_StreamPrefixServer) error
 	//ScanBound -  input: a geolocation boundary, output: returns an array of current object details that are within the boundary
 	ScanBound(context.Context, *ScanBoundRequest) (*ScanBoundResponse, error)
 	//ScanRegexBound -  input: a geolocation boundary, string-array of unique object ids(optional), output: returns an array of current object details that have keys that match the regex and are within the boundary and
@@ -2380,234 +2380,234 @@ type GeoDBServer interface {
 	GetPoint(context.Context, *GetPointRequest) (*GetPointResponse, error)
 }
 
-// UnimplementedGeoDBServer can be embedded to have forward compatible implementations.
-type UnimplementedGeoDBServer struct {
+// UnimplementedUserDBServer can be embedded to have forward compatible implementations.
+type UnimplementedUserDBServer struct {
 }
 
-func (*UnimplementedGeoDBServer) Ping(ctx context.Context, req *PingRequest) (*PingResponse, error) {
+func (*UnimplementedUserDBServer) Ping(ctx context.Context, req *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (*UnimplementedGeoDBServer) Set(ctx context.Context, req *SetRequest) (*SetResponse, error) {
+func (*UnimplementedUserDBServer) Set(ctx context.Context, req *SetRequest) (*SetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
 }
-func (*UnimplementedGeoDBServer) Get(ctx context.Context, req *GetRequest) (*GetResponse, error) {
+func (*UnimplementedUserDBServer) Get(ctx context.Context, req *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedGeoDBServer) GetRegex(ctx context.Context, req *GetRegexRequest) (*GetRegexResponse, error) {
+func (*UnimplementedUserDBServer) GetRegex(ctx context.Context, req *GetRegexRequest) (*GetRegexResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRegex not implemented")
 }
-func (*UnimplementedGeoDBServer) GetPrefix(ctx context.Context, req *GetPrefixRequest) (*GetPrefixResponse, error) {
+func (*UnimplementedUserDBServer) GetPrefix(ctx context.Context, req *GetPrefixRequest) (*GetPrefixResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPrefix not implemented")
 }
-func (*UnimplementedGeoDBServer) GetKeys(ctx context.Context, req *GetKeysRequest) (*GetKeysResponse, error) {
+func (*UnimplementedUserDBServer) GetKeys(ctx context.Context, req *GetKeysRequest) (*GetKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetKeys not implemented")
 }
-func (*UnimplementedGeoDBServer) GetRegexKeys(ctx context.Context, req *GetRegexKeysRequest) (*GetRegexKeysResponse, error) {
+func (*UnimplementedUserDBServer) GetRegexKeys(ctx context.Context, req *GetRegexKeysRequest) (*GetRegexKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRegexKeys not implemented")
 }
-func (*UnimplementedGeoDBServer) GetPrefixKeys(ctx context.Context, req *GetPrefixKeysRequest) (*GetPrefixKeysResponse, error) {
+func (*UnimplementedUserDBServer) GetPrefixKeys(ctx context.Context, req *GetPrefixKeysRequest) (*GetPrefixKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPrefixKeys not implemented")
 }
-func (*UnimplementedGeoDBServer) Delete(ctx context.Context, req *DeleteRequest) (*DeleteResponse, error) {
+func (*UnimplementedUserDBServer) Delete(ctx context.Context, req *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (*UnimplementedGeoDBServer) Stream(req *StreamRequest, srv GeoDB_StreamServer) error {
+func (*UnimplementedUserDBServer) Stream(req *StreamRequest, srv UserDB_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
-func (*UnimplementedGeoDBServer) StreamRegex(req *StreamRegexRequest, srv GeoDB_StreamRegexServer) error {
+func (*UnimplementedUserDBServer) StreamRegex(req *StreamRegexRequest, srv UserDB_StreamRegexServer) error {
 	return status.Errorf(codes.Unimplemented, "method StreamRegex not implemented")
 }
-func (*UnimplementedGeoDBServer) StreamPrefix(req *StreamPrefixRequest, srv GeoDB_StreamPrefixServer) error {
+func (*UnimplementedUserDBServer) StreamPrefix(req *StreamPrefixRequest, srv UserDB_StreamPrefixServer) error {
 	return status.Errorf(codes.Unimplemented, "method StreamPrefix not implemented")
 }
-func (*UnimplementedGeoDBServer) ScanBound(ctx context.Context, req *ScanBoundRequest) (*ScanBoundResponse, error) {
+func (*UnimplementedUserDBServer) ScanBound(ctx context.Context, req *ScanBoundRequest) (*ScanBoundResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ScanBound not implemented")
 }
-func (*UnimplementedGeoDBServer) ScanRegexBound(ctx context.Context, req *ScanRegexBoundRequest) (*ScanRegexBoundResponse, error) {
+func (*UnimplementedUserDBServer) ScanRegexBound(ctx context.Context, req *ScanRegexBoundRequest) (*ScanRegexBoundResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ScanRegexBound not implemented")
 }
-func (*UnimplementedGeoDBServer) ScanPrefixBound(ctx context.Context, req *ScanPrefixBoundRequest) (*ScanPrefixBoundResponse, error) {
+func (*UnimplementedUserDBServer) ScanPrefixBound(ctx context.Context, req *ScanPrefixBoundRequest) (*ScanPrefixBoundResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ScanPrefixBound not implemented")
 }
-func (*UnimplementedGeoDBServer) GetPoint(ctx context.Context, req *GetPointRequest) (*GetPointResponse, error) {
+func (*UnimplementedUserDBServer) GetPoint(ctx context.Context, req *GetPointRequest) (*GetPointResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPoint not implemented")
 }
 
-func RegisterGeoDBServer(s *grpc.Server, srv GeoDBServer) {
-	s.RegisterService(&_GeoDB_serviceDesc, srv)
+func RegisterUserDBServer(s *grpc.Server, srv UserDBServer) {
+	s.RegisterService(&_UserDB_serviceDesc, srv)
 }
 
-func _GeoDB_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).Ping(ctx, in)
+		return srv.(UserDBServer).Ping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/Ping",
+		FullMethod: "/api.UserDB/Ping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).Ping(ctx, req.(*PingRequest))
+		return srv.(UserDBServer).Ping(ctx, req.(*PingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).Set(ctx, in)
+		return srv.(UserDBServer).Set(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/Set",
+		FullMethod: "/api.UserDB/Set",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).Set(ctx, req.(*SetRequest))
+		return srv.(UserDBServer).Set(ctx, req.(*SetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).Get(ctx, in)
+		return srv.(UserDBServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/Get",
+		FullMethod: "/api.UserDB/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).Get(ctx, req.(*GetRequest))
+		return srv.(UserDBServer).Get(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_GetRegex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_GetRegex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRegexRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).GetRegex(ctx, in)
+		return srv.(UserDBServer).GetRegex(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/GetRegex",
+		FullMethod: "/api.UserDB/GetRegex",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).GetRegex(ctx, req.(*GetRegexRequest))
+		return srv.(UserDBServer).GetRegex(ctx, req.(*GetRegexRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_GetPrefix_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_GetPrefix_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPrefixRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).GetPrefix(ctx, in)
+		return srv.(UserDBServer).GetPrefix(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/GetPrefix",
+		FullMethod: "/api.UserDB/GetPrefix",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).GetPrefix(ctx, req.(*GetPrefixRequest))
+		return srv.(UserDBServer).GetPrefix(ctx, req.(*GetPrefixRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_GetKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_GetKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetKeysRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).GetKeys(ctx, in)
+		return srv.(UserDBServer).GetKeys(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/GetKeys",
+		FullMethod: "/api.UserDB/GetKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).GetKeys(ctx, req.(*GetKeysRequest))
+		return srv.(UserDBServer).GetKeys(ctx, req.(*GetKeysRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_GetRegexKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_GetRegexKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRegexKeysRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).GetRegexKeys(ctx, in)
+		return srv.(UserDBServer).GetRegexKeys(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/GetRegexKeys",
+		FullMethod: "/api.UserDB/GetRegexKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).GetRegexKeys(ctx, req.(*GetRegexKeysRequest))
+		return srv.(UserDBServer).GetRegexKeys(ctx, req.(*GetRegexKeysRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_GetPrefixKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_GetPrefixKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPrefixKeysRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).GetPrefixKeys(ctx, in)
+		return srv.(UserDBServer).GetPrefixKeys(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/GetPrefixKeys",
+		FullMethod: "/api.UserDB/GetPrefixKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).GetPrefixKeys(ctx, req.(*GetPrefixKeysRequest))
+		return srv.(UserDBServer).GetPrefixKeys(ctx, req.(*GetPrefixKeysRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).Delete(ctx, in)
+		return srv.(UserDBServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/Delete",
+		FullMethod: "/api.UserDB/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).Delete(ctx, req.(*DeleteRequest))
+		return srv.(UserDBServer).Delete(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _UserDB_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(StreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GeoDBServer).Stream(m, &geoDBStreamServer{stream})
+	return srv.(UserDBServer).Stream(m, &geoDBStreamServer{stream})
 }
 
-type GeoDB_StreamServer interface {
+type UserDB_StreamServer interface {
 	Send(*StreamResponse) error
 	grpc.ServerStream
 }
@@ -2620,15 +2620,15 @@ func (x *geoDBStreamServer) Send(m *StreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _GeoDB_StreamRegex_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _UserDB_StreamRegex_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(StreamRegexRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GeoDBServer).StreamRegex(m, &geoDBStreamRegexServer{stream})
+	return srv.(UserDBServer).StreamRegex(m, &geoDBStreamRegexServer{stream})
 }
 
-type GeoDB_StreamRegexServer interface {
+type UserDB_StreamRegexServer interface {
 	Send(*StreamRegexResponse) error
 	grpc.ServerStream
 }
@@ -2641,15 +2641,15 @@ func (x *geoDBStreamRegexServer) Send(m *StreamRegexResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _GeoDB_StreamPrefix_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _UserDB_StreamPrefix_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(StreamPrefixRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GeoDBServer).StreamPrefix(m, &geoDBStreamPrefixServer{stream})
+	return srv.(UserDBServer).StreamPrefix(m, &geoDBStreamPrefixServer{stream})
 }
 
-type GeoDB_StreamPrefixServer interface {
+type UserDB_StreamPrefixServer interface {
 	Send(*StreamPrefixResponse) error
 	grpc.ServerStream
 }
@@ -2662,149 +2662,149 @@ func (x *geoDBStreamPrefixServer) Send(m *StreamPrefixResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _GeoDB_ScanBound_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_ScanBound_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ScanBoundRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).ScanBound(ctx, in)
+		return srv.(UserDBServer).ScanBound(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/ScanBound",
+		FullMethod: "/api.UserDB/ScanBound",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).ScanBound(ctx, req.(*ScanBoundRequest))
+		return srv.(UserDBServer).ScanBound(ctx, req.(*ScanBoundRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_ScanRegexBound_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_ScanRegexBound_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ScanRegexBoundRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).ScanRegexBound(ctx, in)
+		return srv.(UserDBServer).ScanRegexBound(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/ScanRegexBound",
+		FullMethod: "/api.UserDB/ScanRegexBound",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).ScanRegexBound(ctx, req.(*ScanRegexBoundRequest))
+		return srv.(UserDBServer).ScanRegexBound(ctx, req.(*ScanRegexBoundRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_ScanPrefixBound_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_ScanPrefixBound_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ScanPrefixBoundRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).ScanPrefixBound(ctx, in)
+		return srv.(UserDBServer).ScanPrefixBound(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/ScanPrefixBound",
+		FullMethod: "/api.UserDB/ScanPrefixBound",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).ScanPrefixBound(ctx, req.(*ScanPrefixBoundRequest))
+		return srv.(UserDBServer).ScanPrefixBound(ctx, req.(*ScanPrefixBoundRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeoDB_GetPoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserDB_GetPoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPointRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeoDBServer).GetPoint(ctx, in)
+		return srv.(UserDBServer).GetPoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.GeoDB/GetPoint",
+		FullMethod: "/api.UserDB/GetPoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeoDBServer).GetPoint(ctx, req.(*GetPointRequest))
+		return srv.(UserDBServer).GetPoint(ctx, req.(*GetPointRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _GeoDB_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "api.GeoDB",
-	HandlerType: (*GeoDBServer)(nil),
+var _UserDB_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "api.UserDB",
+	HandlerType: (*UserDBServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Ping",
-			Handler:    _GeoDB_Ping_Handler,
+			Handler:    _UserDB_Ping_Handler,
 		},
 		{
 			MethodName: "Set",
-			Handler:    _GeoDB_Set_Handler,
+			Handler:    _UserDB_Set_Handler,
 		},
 		{
 			MethodName: "Get",
-			Handler:    _GeoDB_Get_Handler,
+			Handler:    _UserDB_Get_Handler,
 		},
 		{
 			MethodName: "GetRegex",
-			Handler:    _GeoDB_GetRegex_Handler,
+			Handler:    _UserDB_GetRegex_Handler,
 		},
 		{
 			MethodName: "GetPrefix",
-			Handler:    _GeoDB_GetPrefix_Handler,
+			Handler:    _UserDB_GetPrefix_Handler,
 		},
 		{
 			MethodName: "GetKeys",
-			Handler:    _GeoDB_GetKeys_Handler,
+			Handler:    _UserDB_GetKeys_Handler,
 		},
 		{
 			MethodName: "GetRegexKeys",
-			Handler:    _GeoDB_GetRegexKeys_Handler,
+			Handler:    _UserDB_GetRegexKeys_Handler,
 		},
 		{
 			MethodName: "GetPrefixKeys",
-			Handler:    _GeoDB_GetPrefixKeys_Handler,
+			Handler:    _UserDB_GetPrefixKeys_Handler,
 		},
 		{
 			MethodName: "Delete",
-			Handler:    _GeoDB_Delete_Handler,
+			Handler:    _UserDB_Delete_Handler,
 		},
 		{
 			MethodName: "ScanBound",
-			Handler:    _GeoDB_ScanBound_Handler,
+			Handler:    _UserDB_ScanBound_Handler,
 		},
 		{
 			MethodName: "ScanRegexBound",
-			Handler:    _GeoDB_ScanRegexBound_Handler,
+			Handler:    _UserDB_ScanRegexBound_Handler,
 		},
 		{
 			MethodName: "ScanPrefixBound",
-			Handler:    _GeoDB_ScanPrefixBound_Handler,
+			Handler:    _UserDB_ScanPrefixBound_Handler,
 		},
 		{
 			MethodName: "GetPoint",
-			Handler:    _GeoDB_GetPoint_Handler,
+			Handler:    _UserDB_GetPoint_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Stream",
-			Handler:       _GeoDB_Stream_Handler,
+			Handler:       _UserDB_Stream_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "StreamRegex",
-			Handler:       _GeoDB_StreamRegex_Handler,
+			Handler:       _UserDB_StreamRegex_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "StreamPrefix",
-			Handler:       _GeoDB_StreamPrefix_Handler,
+			Handler:       _UserDB_StreamPrefix_Handler,
 			ServerStreams: true,
 		},
 	},

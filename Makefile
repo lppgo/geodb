@@ -1,4 +1,4 @@
-version := 0.0.23
+version := 0.0.0
 .DEFAULT_GOAL := help
 
 .PHONY: help
@@ -37,15 +37,15 @@ push: docker-build docker-push ## rebuild & push docker image then push updated 
 	git push origin v$(version)
 
 docker-build: ## build docker image
-	docker build -t colemanword/geodb:$(version) .
+	docker build -t colemanword/userdb:$(version) .
 
 docker-push: ## push docker image
-	docker push colemanword/geodb:$(version)
-	docker tag colemanword/geodb:$(version) colemanword/geodb:latest
-	docker push colemanword/geodb:latest
+	docker push colemanword/userdb:$(version)
+	docker tag colemanword/userdb:$(version) colemanword/userdb:latest
+	docker push colemanword/userdb:latest
 
 docker-run: ## run docker image
-	docker run -d colemanword/geodb:$(version) -p 8080:8080
+	docker run -d colemanword/userdb:$(version) -p 8080:8080
 
 test: ## run tests
 	@go test -v

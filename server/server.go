@@ -3,10 +3,9 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/autom8ter/geodb/auth"
-	"github.com/autom8ter/geodb/config"
-	"github.com/autom8ter/geodb/maps"
-	"github.com/autom8ter/geodb/stream"
+	"github.com/autom8ter/userdb/auth"
+	"github.com/autom8ter/userdb/config"
+	"github.com/autom8ter/userdb/stream"
 	"github.com/dgraph-io/badger/v2"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -34,7 +33,6 @@ type Server struct {
 	streamHub  *stream.Hub
 	db         *badger.DB
 	hTTPClient *http.Client
-	gmaps      *maps.Client
 	logger     *log.Logger
 }
 
@@ -58,31 +56,17 @@ func (s *Server) GetLogger() *log.Logger {
 	return s.logger
 }
 
-func (s *Server) GetGmaps() *maps.Client {
-	if s.gmaps == nil {
-		return nil
-	}
-	return s.gmaps
-}
-
-func GetDeps() (*badger.DB, *stream.Hub, *maps.Client, error) {
-	db, err := badger.Open(badger.DefaultOptions(config.Config.GetString("GEODB_PATH")))
+func GetDeps() (*badger.DB, *stream.Hub,  error) {
+	db, err := badger.Open(badger.DefaultOptions(config.Config.GetString("USERDB_PATH")))
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil,  err
 	}
 	hub := stream.NewHub()
-	if config.Config.IsSet("GEODB_GMAPS_KEY") {
-		client, err := maps.NewClient(db, config.Config.GetString("GEODB_GMAPS_KEY"), config.Config.GetDuration("GEODB_GMAPS_CACHE_DURATION"))
-		if err != nil {
-			return db, hub, nil, err
-		}
-		return db, hub, client, err
-	}
-	return db, stream.NewHub(), nil, nil
+	return db, hub, nil
 }
 
 func NewServer() (*Server, error) {
-	db, hub, gmaps, err := GetDeps()
+	db, hub, err := GetDeps()
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +98,6 @@ func NewServer() (*Server, error) {
 		hTTPClient: http.DefaultClient,
 		logger:     log.New(),
 		streamHub:  hub,
-		gmaps:      gmaps,
 	}
 	s.router.Use(
 		middleware.Recover(),
@@ -125,7 +108,7 @@ func NewServer() (*Server, error) {
 }
 
 func (s *Server) Run() {
-	lis, err := net.Listen("tcp", config.Config.GetString("GEODB_PORT"))
+	lis, err := net.Listen("tcp", config.Config.GetString("USERDB_PORT"))
 	if err != nil {
 		s.router.Logger.Fatal(err.Error())
 	}
@@ -136,7 +119,7 @@ func (s *Server) Run() {
 	gMux := mux.Match(cmux.HTTP2())
 	hMux := mux.Match(cmux.Any())
 
-	fmt.Printf("starting grpc and http server on port %s\n", config.Config.GetString("GEODB_PORT"))
+	fmt.Printf("starting grpc and http server on port %s\n", config.Config.GetString("USERDB_PORT"))
 
 	egp, ctx := errgroup.WithContext(context.Background())
 	egp.Go(func() error {
@@ -144,7 +127,7 @@ func (s *Server) Run() {
 	})
 	egp.Go(func() error {
 		for {
-			time.Sleep(config.Config.GetDuration("GEODB_GC_INTERVAL"))
+			time.Sleep(config.Config.GetDuration("USERDB_GC_INTERVAL"))
 			s.db.RunValueLogGC(0.7)
 		}
 	})

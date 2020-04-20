@@ -2,21 +2,21 @@ package stream
 
 import (
 	"context"
-	api "github.com/autom8ter/geodb/gen/go/geodb"
+	api "github.com/autom8ter/userdb/gen/go/userdb"
 	"github.com/gofrs/uuid"
 	"sync"
 )
 
-var objectChan = make(chan *api.ObjectDetail, 5000)
+var objectChan = make(chan *api.UserDetail, 5000)
 
 type Hub struct {
-	objectClients map[string]chan *api.ObjectDetail
+	objectClients map[string]chan *api.UserDetail
 	objMu         *sync.Mutex
 }
 
 func NewHub() *Hub {
 	return &Hub{
-		objectClients: map[string]chan *api.ObjectDetail{},
+		objectClients: map[string]chan *api.UserDetail{},
 		objMu:         &sync.Mutex{},
 	}
 }
@@ -26,7 +26,7 @@ func (h *Hub) StartObjectStream(ctx context.Context) error {
 		select {
 		case obj := <-objectChan:
 			if h.objectClients == nil {
-				h.objectClients = map[string]chan *api.ObjectDetail{}
+				h.objectClients = map[string]chan *api.UserDetail{}
 			}
 
 			for _, channel := range h.objectClients {
@@ -44,13 +44,13 @@ func (h *Hub) AddObjectStreamClient(clientID string) string {
 	h.objMu.Lock()
 	defer h.objMu.Unlock()
 	if h.objectClients == nil {
-		h.objectClients = map[string]chan *api.ObjectDetail{}
+		h.objectClients = map[string]chan *api.UserDetail{}
 	}
 	if clientID == "" {
 		id, _ := uuid.NewV4()
 		clientID = id.String()
 	}
-	h.objectClients[clientID] = make(chan *api.ObjectDetail)
+	h.objectClients[clientID] = make(chan *api.UserDetail)
 	return clientID
 }
 
@@ -63,7 +63,7 @@ func (h *Hub) RemoveObjectStreamClient(id string) {
 	}
 }
 
-func (h *Hub) GetClientObjectStream(id string) chan *api.ObjectDetail {
+func (h *Hub) GetClientObjectStream(id string) chan *api.UserDetail {
 	h.objMu.Lock()
 	defer h.objMu.Unlock()
 	if _, ok := h.objectClients[id]; ok {
@@ -72,10 +72,10 @@ func (h *Hub) GetClientObjectStream(id string) chan *api.ObjectDetail {
 	return nil
 }
 
-func PublishObject(obj *api.ObjectDetail) {
+func PublishObject(obj *api.UserDetail) {
 	objectChan <- obj
 }
 
-func (h *Hub) PublishObject(obj *api.ObjectDetail) {
+func (h *Hub) PublishObject(obj *api.UserDetail) {
 	PublishObject(obj)
 }
