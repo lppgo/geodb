@@ -15,37 +15,11 @@ func (p *UserDB) Set(ctx context.Context, r *api.SetRequest) (*api.SetResponse, 
 	if err := r.Validate(); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	objects, err := db.Set(p.db, p.hub, r.User)
+	objects, err := db.Set(p.db, r.User)
 	if err != nil {
 		return nil, err
 	}
 	return &api.SetResponse{
-		User: objects,
-	}, nil
-}
-
-func (p *UserDB) SetSource(ctx context.Context, r *api.SetSourceRequest) (*api.SetSourceResponse, error) {
-	if err := r.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-	objects, err := db.SetSource(p.db, p.hub, r.Email, r.Source)
-	if err != nil {
-		return nil, err
-	}
-	return &api.SetSourceResponse{
-		User: objects,
-	}, nil
-}
-
-func (p *UserDB) SetPlan(ctx context.Context, r *api.SetPlanRequest) (*api.SetPlanResponse, error) {
-	if err := r.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-	objects, err := db.SetPlan(p.db, p.hub, r.Email, r.Plan)
-	if err != nil {
-		return nil, err
-	}
-	return &api.SetPlanResponse{
 		User: objects,
 	}, nil
 }
@@ -93,7 +67,7 @@ func (p *UserDB) Login(ctx context.Context, r *api.LoginRequest) (*api.LoginResp
 	if err := json.NewDecoder(resp.Body).Decode(usr); err != nil {
 		return nil, err
 	}
-	dbUser, err := db.Login(p.db, p.hub, usr)
+	dbUser, err := db.Login(p.db, usr)
 	if err != nil {
 		return nil, err
 	}

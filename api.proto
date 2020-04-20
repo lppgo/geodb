@@ -8,12 +8,8 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 service UserDB {
     //Ping - input: empty, output: returns ok if server is healthy.
     rpc Ping(PingRequest) returns(PingResponse){};
-    //Set - input: an user output: an user detail. User details are enhanced when the google maps integration is active
+    
     rpc Login(LoginRequest) returns(LoginResponse){};
-    //Set - input: an user output: an user detail. User details are enhanced when the google maps integration is active
-    rpc Set(SetRequest) returns(SetResponse){};
-    rpc SetPlan(SetPlanRequest) returns(SetPlanResponse){};
-    rpc SetSource(SetSourceRequest) returns(SetSourceResponse){};
     //Get - input: an array of user emails, output: returns an array of current user details
     rpc Get(GetRequest) returns(GetResponse){};
     //GetRegex - input: a regex string, output: returns an array of current user details with emails that match the regex pattern
@@ -24,12 +20,32 @@ service UserDB {
     rpc GetRegexEmails(GetRegexEmailsRequest) returns(GetRegexEmailsResponse){};
     //Delete -  input: an array of user email strings to delete, output: none
     rpc Delete(DeleteRequest) returns(DeleteResponse){};
-    //Stream -  input: a clientID(optional) and an array of user emails(optional),
-    //output: a stream of user details for realtime, targetted user geolocation updates
-    rpc Stream(StreamRequest) returns(stream StreamResponse){};
-    //StreamRegex -  input: a clientID(optional) a regex string,
-    //output: a stream of user details for realtime, targetted user geolocation updates that match the regex pattern
-    rpc StreamRegex(StreamRegexRequest) returns(stream StreamRegexResponse){};
+
+    rpc NewAccount(NewAccountRequest) returns(NewAccountResponse){};
+    rpc GetAccount(GetAccountRequest) returns(GetAccountResponse){};
+    rpc GetAccountRegex(GetAccountRegexRequest) returns(GetAccountRegexResponse){};
+    rpc DeleteAccount(DeleteAccountRequest) returns(DeleteAccountResponse){};
+    rpc SetAccountPlan(SetAccountPlanRequest) returns(SetAccountPlanResponse){};
+    rpc SetAccountSource(SetAccountSourceRequest) returns(SetAccountSourceResponse){};
+    rpc GetAccountNames(GetAccountNamesRequest) returns(GetAccountNamesResponse){};
+    rpc GetAccountNamesRegex(GetAccountNamesRegexRequest) returns(GetAccountNamesRegexResponse){};
+    
+    
+  
+}
+
+message Account {
+    string name =1;
+    string admin_email =2;
+    map<string, string> metadata =3; //optional metadata associated with the user
+    Payment payment =4;
+    int64 updated_unix =5; //unix timestamp representing last update (optional
+}
+
+message Payment {
+    string customer_id =1;
+    string plan =2;
+    string product =4;
 }
 
 //UserDetail is an enhanced view of an User containing a human readable address and the users latest tracking information
@@ -37,14 +53,8 @@ message UserDetail {
     string email = 1 [(validator.field) = {regex: "^.{1,225}$"}];
     string name = 2 [(validator.field) = {regex: "^.{1,225}$"}];
     map<string, string> metadata =3; //optional metadata associated with the user
-    Payment payment =4;
+    Account account =4; //optional
     int64 updated_unix =5; //unix timestamp representing last update (optional)
-}
-
-message Payment {
-    string customer_id =1;
-    string plan =2;
-    string source =3;
 }
 
 message StreamRequest {
@@ -82,24 +92,6 @@ message SetRequest {
 }
 
 message SetResponse {
-    UserDetail user= 1;
-}
-
-message SetSourceRequest {
-    string email =1;
-    string source= 2;
-}
-
-message SetSourceResponse {
-    UserDetail user= 1;
-}
-
-message SetPlanRequest {
-    string email =1;
-    string plan= 2;
-}
-
-message SetPlanResponse {
     UserDetail user= 1;
 }
 
@@ -143,4 +135,76 @@ message PingRequest {}
 
 message PingResponse {
     bool ok =1;
+}
+
+message NewAccountRequest {
+    string name =1;
+    string admin_email =2;
+    map<string, string> metadata =3; //optional metadata associated with the user
+}
+
+message NewAccountResponse {
+    Account account =1;
+}
+
+message GetAccountRequest {
+    repeated string names =1;
+}
+
+message GetAccountResponse {
+    map<string, Account> accounts = 1;
+}
+message GetAccountRegexRequest {
+    string regex = 1 [(validator.field) = {regex: "^.{1,225}$"}];
+}
+message GetAccountRegexResponse {
+    map<string, Account> accounts= 1;
+}
+
+message SetAccountPlanRequest {
+    string account_name =1 [(validator.field) = {regex: "^.{1,225}$"}];
+    string plan =2 [(validator.field) = {regex: "^.{1,225}$"}];
+}
+
+message SetAccountPlanResponse {
+    Account account =1;
+}
+
+
+message SetAccountSourceRequest {
+    string account_name =1 [(validator.field) = {regex: "^.{1,225}$"}];
+    string source =2 [(validator.field) = {regex: "^.{1,225}$"}];
+}
+
+message SetAccountSourceResponse {
+    Account account =1;
+}
+
+message DeleteAccountRequest {
+    repeated string names =1;
+}
+
+message DeleteAccountResponse {}
+
+message GetAccountNamesRequest {}
+
+message GetAccountNamesResponse {
+    repeated string names =1;
+}
+
+message GetAccountNamesRegexRequest {
+    string regex =1 [(validator.field) = {regex: "^.{1,225}$"}];
+}
+
+message GetAccountNamesRegexResponse {
+    repeated string names =1;
+}
+
+message SetUserAccountRequest {
+    string user_email =1 [(validator.field) = {regex: "^.{1,225}$"}];
+    string account_name =2 [(validator.field) = {regex: "^.{1,225}$"}];
+}
+
+message SetUserAccountResponse {
+    UserDetail user =1;
 }

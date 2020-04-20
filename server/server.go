@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/autom8ter/userdb/auth"
 	"github.com/autom8ter/userdb/config"
-	"github.com/autom8ter/userdb/stream"
 	"github.com/dgraph-io/badger/v2"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -33,7 +32,6 @@ import (
 type Server struct {
 	server     *grpc.Server
 	router     *echo.Echo
-	streamHub  *stream.Hub
 	db         *badger.DB
 	hTTPClient *http.Client
 	logger     *log.Logger
@@ -52,10 +50,6 @@ func (s *Server) GetOAuth() *oauth2.Config {
 	return s.config
 }
 
-func (s *Server) GetStream() *stream.Hub {
-	return s.streamHub
-}
-
 func (s *Server) GetHTTPClient() *http.Client {
 	return s.hTTPClient
 }
@@ -64,13 +58,12 @@ func (s *Server) GetLogger() *log.Logger {
 	return s.logger
 }
 
-func GetDeps() (*badger.DB, *stream.Hub, *oauth2.Config, error) {
+func GetDeps() (*badger.DB, *oauth2.Config, error) {
 	stripe2.Key = config.Config.GetString("USERDB_STRIPE_KEY")
 	db, err := badger.Open(badger.DefaultOptions(config.Config.GetString("USERDB_PATH")))
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
-	hub := stream.NewHub()
 	cfg := &oauth2.Config{
 		ClientID:     config.Config.GetString("USERDB_GOOGLE_CLIENT_ID"),
 		ClientSecret: config.Config.GetString("USERDB_GOOGLE_CLIENT_SECRET"),
@@ -78,11 +71,11 @@ func GetDeps() (*badger.DB, *stream.Hub, *oauth2.Config, error) {
 		RedirectURL:  config.Config.GetString("USERDB_GOOGLE_REDIRECT"),
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
 	}
-	return db, hub, cfg, nil
+	return db, cfg, nil
 }
 
 func NewServer() (*Server, error) {
-	db, hub, cfg, err := GetDeps()
+	db, cfg, err := GetDeps()
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +106,6 @@ func NewServer() (*Server, error) {
 		db:         db,
 		hTTPClient: http.DefaultClient,
 		logger:     log.New(),
-		streamHub:  hub,
 		config:     cfg,
 	}
 	s.router.Use(
@@ -138,10 +130,7 @@ func (s *Server) Run() {
 
 	fmt.Printf("starting grpc and http server on port %s\n", config.Config.GetString("USERDB_PORT"))
 
-	egp, ctx := errgroup.WithContext(context.Background())
-	egp.Go(func() error {
-		return s.streamHub.StartObjectStream(ctx)
-	})
+	egp, _ := errgroup.WithContext(context.Background())
 	egp.Go(func() error {
 		for {
 			time.Sleep(config.Config.GetDuration("USERDB_GC_INTERVAL"))
