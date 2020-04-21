@@ -101,7 +101,7 @@ func (p *UserDB) Login(ctx context.Context, r *api.LoginRequest) (*api.LoginResp
 }
 
 func (p *UserDB) LoginJWT(ctx context.Context, r *api.LoginJWTRequest) (*api.LoginJWTResponse, error) {
-	usr, err := auth.UserFromJWT(r.Jwt, func(email string) (detail *api.UserDetail, err error) {
+	usr, err := auth.UserFromJWT(r.Jwt, func(email string) (detail *api.User, err error) {
 		usr, err := db.Get(p.db, []string{email})
 		if err != nil {
 			return nil, err
@@ -146,11 +146,11 @@ func (p *UserDB) RefundCharge(ctx context.Context, r *api.RefundChargeRequest) (
 	}, nil
 }
 
-func (p *UserDB) IncPlanUsage(ctx context.Context, r *api.IncPlanUsageRequest) (*api.IncPlanUsageResponse, error) {
-	if err := db.IncPlanUsage(p.db, r.Increment, r.Email, r.Plan); err != nil {
+func (p *UserDB) IncUsage(ctx context.Context, r *api.IncUsageRequest) (*api.IncUsageResponse, error) {
+	if err := db.IncUsage(p.db, r.Increment, r.Amount, r.Email, r.SubItem); err != nil {
 		return nil, err
 	}
-	return &api.IncPlanUsageResponse{}, nil
+	return &api.IncUsageResponse{}, nil
 }
 
 func (p *UserDB) Charge(ctx context.Context, r *api.ChargeRequest) (*api.ChargeResponse, error) {

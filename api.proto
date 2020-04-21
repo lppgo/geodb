@@ -24,23 +24,10 @@ service UserDB {
 
     rpc AddPlan(SetPlanRequest) returns(SetPlanResponse){};
     rpc SetSource(SetSourceRequest) returns(SetSourceResponse){};
-    rpc IncPlanUsage(IncPlanUsageRequest) returns(IncPlanUsageResponse){};
+    rpc IncUsage(IncUsageRequest) returns(IncUsageResponse){};
     rpc Charge(ChargeRequest) returns(ChargeResponse){};
     rpc UpdateCharge(UpdateChargeRequest) returns(UpdateChargeResponse){};
     rpc RefundCharge(RefundChargeRequest) returns(RefundChargeResponse){};
-}
-
-message Payment {
-    string customer_id =1;
-    bool has_source =2;
-    repeated Subscription subscriptions = 3;
-}
-
-message Subscription {
-    string subscription =1;
-    string plan =2;
-    string product =3;
-    string item =4;
 }
 
 message PingRequest {}
@@ -49,13 +36,24 @@ message PingResponse {
     bool ok =1;
 }
 
-//UserDetail is an enhanced view of an User containing a human readable address and the users latest tracking information
-message UserDetail {
+message Subscription {
+    string sub_id = 1;
+    repeated string sub_items =2;
+    map<string, string> sub_metadata =3; //optional metadata associated with the user
+    string plan_id =4;
+    int64 plan_amount =5;
+    map<string, string> plan_metadata =6; //optional metadata associated with the user
+}
+
+//User is an enhanced view of an User containing a human readable address and the users latest tracking information
+message User {
     string email = 1 [(validator.field) = {regex: "^.{1,225}$"}];
     string name = 2 [(validator.field) = {regex: "^.{1,225}$"}];
     map<string, string> metadata =3; //optional metadata associated with the user
-    Payment payment =4;
-    int64 updated_unix =5; //unix timestamp representing last update (optional)
+    string customer_id =4;
+    bool has_source =5;
+    Subscription subscription =6;
+    int64 updated_unix =7; //unix timestamp representing last update (optional)
 }
 
 message LoginRequest {
@@ -63,7 +61,7 @@ message LoginRequest {
 }
 
 message LoginResponse {
-    UserDetail user =1;
+    User user =1;
     string jwt =2;
 }
 
@@ -72,15 +70,15 @@ message LoginJWTRequest {
 }
 
 message LoginJWTResponse {
-    UserDetail user =1;
+    User user =1;
 }
 
 message SetRequest {
-    UserDetail user= 1;
+    User user= 1;
 }
 
 message SetResponse {
-    UserDetail user= 1;
+    User user= 1;
 }
 
 message GetEmailsRequest {}
@@ -102,7 +100,7 @@ message GetRequest {
 }
 
 message GetResponse {
-    map<string, UserDetail> users= 1;
+    map<string, User> users= 1;
 }
 
 message GetRegexRequest {
@@ -110,7 +108,7 @@ message GetRegexRequest {
 }
 
 message GetRegexResponse {
-    map<string, UserDetail> users= 1;
+    map<string, User> users= 1;
 }
 
 message DeleteRequest {
@@ -132,7 +130,7 @@ message SetPlanRequest {
 }
 
 message SetPlanResponse {
-     UserDetail user =1;
+     User user =1;
 }
 
 
@@ -142,16 +140,17 @@ message SetSourceRequest {
 }
 
 message SetSourceResponse {
-    UserDetail user =1;
+    User user =1;
 }
 
-message IncPlanUsageRequest {
+message IncUsageRequest {
     string email =1 [(validator.field) = {regex: "^.{1,225}$"}];
-    int64 increment =2 [(validator.field) = {int_gt : 0}];
-    string plan =3 [(validator.field) = {regex: "^.{1,225}$"}];
+    int64 amount =2;
+    bool increment =3;
+    string sub_item =4 [(validator.field) = {regex: "^.{1,225}$"}];
 }
 
-message IncPlanUsageResponse {}
+message IncUsageResponse {}
 
 message ChargeRequest {
     string email =1 [(validator.field) = {regex: "^.{1,225}$"}];

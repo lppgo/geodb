@@ -49,7 +49,7 @@ func NewUserJWT(userEmail string) (string, error) {
 	return token.SignedString([]byte(config.Config.GetString("USERDB_JWT_SECRET")))
 }
 
-func UserFromJWT(tokenString string, fn func(email string) (*api.UserDetail, error)) (*api.UserDetail, error) {
+func UserFromJWT(tokenString string, fn func(email string) (*api.User, error)) (*api.User, error) {
 	claims := &jwt.StandardClaims{}
 	_, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 		if !t.Valid {
