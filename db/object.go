@@ -135,6 +135,7 @@ func Set(db *badger.DB, maps *maps.Client, hub *stream.Hub, obj *api.Object) (*a
 		return nil, err
 	}
 	txn := db.NewTransaction(true)
+	defer txn.Discard()
 	if err := txn.SetEntry(&badger.Entry{
 		Key:       []byte(obj.Key),
 		Value:     bits,
