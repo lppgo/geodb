@@ -163,8 +163,8 @@ func (p *UserDB) Charge(ctx context.Context, r *api.ChargeRequest) (*api.ChargeR
 	}, nil
 }
 
-func (p *UserDB) AddPlan(ctx context.Context, r *api.SetPlanRequest) (*api.SetPlanResponse, error) {
-	detail, err := db.AddPlan(p.db, r.Email, r.Plan)
+func (p *UserDB) SetPlan(ctx context.Context, r *api.SetPlanRequest) (*api.SetPlanResponse, error) {
+	detail, err := db.SetPlan(p.db, r.Email, r.Plan)
 	if err != nil {
 		return nil, err
 	}

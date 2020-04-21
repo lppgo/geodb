@@ -136,53 +136,6 @@ func Get(db *badger.DB, emails []string) (map[string]*api.User, error) {
 	return objects, nil
 }
 
-func GetDetail(db *badger.DB, emails []string) (map[string]*api.User, error) {
-	txn := db.NewTransaction(false)
-	defer txn.Discard()
-	objects := map[string]*api.User{}
-	if len(emails) == 0 {
-		iter := txn.NewIterator(badger.DefaultIteratorOptions)
-		defer iter.Close()
-		for iter.Rewind(); iter.Valid(); iter.Next() {
-			item := iter.Item()
-			if item.UserMeta() != 1 {
-				continue
-			}
-			res, err := item.ValueCopy(nil)
-			if err != nil {
-				return nil, status.Errorf(codes.Internal, "failed to copy data: %s", err.Error())
-			}
-			if len(res) > 0 {
-				var obj = &api.User{}
-				if err := proto.Unmarshal(res, obj); err != nil {
-					return nil, status.Errorf(codes.Internal, "(keys) %s failed to unmarshal protobuf: %s", string(item.Key()), err.Error())
-				}
-				objects[string(item.Key())] = obj
-			}
-		}
-	} else {
-		for _, key := range emails {
-			i, err := txn.Get([]byte(key))
-			if err != nil {
-				return nil, status.Errorf(codes.InvalidArgument, "failed to get key: %s", err.Error())
-			}
-			if i.UserMeta() != 1 {
-				continue
-			}
-			res, err := i.ValueCopy(nil)
-			if err != nil {
-				return nil, status.Errorf(codes.Internal, "failed to copy data: %s", err.Error())
-			}
-			var obj = &api.User{}
-			if err := proto.Unmarshal(res, obj); err != nil {
-				return nil, status.Errorf(codes.Internal, "(all) failed to unmarshal protobuf: %s", err.Error())
-			}
-			objects[key] = obj
-		}
-	}
-	return objects, nil
-}
-
 func GetRegex(db *badger.DB, regex string) (map[string]*api.User, error) {
 	txn := db.NewTransaction(false)
 	defer txn.Discard()
@@ -278,7 +231,7 @@ func GetRegexEmails(db *badger.DB, regex string) ([]string, error) {
 	return keys, nil
 }
 
-func AddPlan(db *badger.DB, email, plan string) (*api.User, error) {
+func SetPlan(db *badger.DB, email, plan string) (*api.User, error) {
 	txn := db.NewTransaction(true)
 	defer txn.Discard()
 	i, err := txn.Get([]byte(email))
@@ -320,6 +273,7 @@ func AddPlan(db *badger.DB, email, plan string) (*api.User, error) {
 				apiSub.SubItems = append(apiSub.SubItems, item.ID)
 			}
 		}
+		usr.Subscription = apiSub
 	}
 	bits, err := proto.Marshal(usr)
 	if err != nil {

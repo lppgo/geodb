@@ -22,7 +22,7 @@ service UserDB {
     rpc Delete(DeleteRequest) returns(DeleteResponse){};
 
 
-    rpc AddPlan(SetPlanRequest) returns(SetPlanResponse){};
+    rpc SetPlan(SetPlanRequest) returns(SetPlanResponse){};
     rpc SetSource(SetSourceRequest) returns(SetSourceResponse){};
     rpc IncUsage(IncUsageRequest) returns(IncUsageResponse){};
     rpc Charge(ChargeRequest) returns(ChargeResponse){};
