@@ -17,15 +17,6 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *Account) Validate() error {
-	// Validation of proto3 map<> fields is unsupported.
-	if this.Payment != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Payment); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Payment", err)
-		}
-	}
-	return nil
-}
 func (this *Payment) Validate() error {
 	for _, item := range this.Subscriptions {
 		if item != nil {
@@ -37,6 +28,12 @@ func (this *Payment) Validate() error {
 	return nil
 }
 func (this *Subscription) Validate() error {
+	return nil
+}
+func (this *PingRequest) Validate() error {
+	return nil
+}
+func (this *PingResponse) Validate() error {
 	return nil
 }
 
@@ -51,6 +48,11 @@ func (this *UserDetail) Validate() error {
 		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Name))
 	}
 	// Validation of proto3 map<> fields is unsupported.
+	if this.Payment != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Payment); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Payment", err)
+		}
+	}
 	return nil
 }
 
@@ -147,134 +149,34 @@ func (this *DeleteRequest) Validate() error {
 func (this *DeleteResponse) Validate() error {
 	return nil
 }
-func (this *PingRequest) Validate() error {
-	return nil
-}
-func (this *PingResponse) Validate() error {
-	return nil
-}
 
-var _regex_NewAccountRequest_Name = regexp.MustCompile(`^.{1,225}$`)
-var _regex_NewAccountRequest_AdminEmail = regexp.MustCompile(`^.{1,225}$`)
+var _regex_NewRequest_Name = regexp.MustCompile(`^.{1,225}$`)
+var _regex_NewRequest_AdminEmail = regexp.MustCompile(`^.{1,225}$`)
 
-func (this *NewAccountRequest) Validate() error {
-	if !_regex_NewAccountRequest_Name.MatchString(this.Name) {
+func (this *NewRequest) Validate() error {
+	if !_regex_NewRequest_Name.MatchString(this.Name) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Name))
 	}
-	if !_regex_NewAccountRequest_AdminEmail.MatchString(this.AdminEmail) {
+	if !_regex_NewRequest_AdminEmail.MatchString(this.AdminEmail) {
 		return github_com_mwitkow_go_proto_validators.FieldError("AdminEmail", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.AdminEmail))
 	}
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
-func (this *NewAccountResponse) Validate() error {
-	if this.Account != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Account); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Account", err)
-		}
+
+var _regex_SetPlanRequest_Email = regexp.MustCompile(`^.{1,225}$`)
+var _regex_SetPlanRequest_Plan = regexp.MustCompile(`^.{1,225}$`)
+
+func (this *SetPlanRequest) Validate() error {
+	if !_regex_SetPlanRequest_Email.MatchString(this.Email) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Email", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Email))
 	}
-	return nil
-}
-func (this *GetAccountRequest) Validate() error {
-	return nil
-}
-func (this *GetAccountResponse) Validate() error {
-	// Validation of proto3 map<> fields is unsupported.
-	return nil
-}
-
-var _regex_GetAccountRegexRequest_Regex = regexp.MustCompile(`^.{1,225}$`)
-
-func (this *GetAccountRegexRequest) Validate() error {
-	if !_regex_GetAccountRegexRequest_Regex.MatchString(this.Regex) {
-		return github_com_mwitkow_go_proto_validators.FieldError("Regex", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Regex))
-	}
-	return nil
-}
-func (this *GetAccountRegexResponse) Validate() error {
-	// Validation of proto3 map<> fields is unsupported.
-	return nil
-}
-
-var _regex_SetAccountPlanRequest_AccountName = regexp.MustCompile(`^.{1,225}$`)
-var _regex_SetAccountPlanRequest_Plan = regexp.MustCompile(`^.{1,225}$`)
-
-func (this *SetAccountPlanRequest) Validate() error {
-	if !_regex_SetAccountPlanRequest_AccountName.MatchString(this.AccountName) {
-		return github_com_mwitkow_go_proto_validators.FieldError("AccountName", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.AccountName))
-	}
-	if !_regex_SetAccountPlanRequest_Plan.MatchString(this.Plan) {
+	if !_regex_SetPlanRequest_Plan.MatchString(this.Plan) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Plan", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Plan))
 	}
 	return nil
 }
-func (this *SetAccountPlanResponse) Validate() error {
-	if this.Account != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Account); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Account", err)
-		}
-	}
-	return nil
-}
-
-var _regex_SetAccountSourceRequest_AccountName = regexp.MustCompile(`^.{1,225}$`)
-var _regex_SetAccountSourceRequest_Source = regexp.MustCompile(`^.{1,225}$`)
-
-func (this *SetAccountSourceRequest) Validate() error {
-	if !_regex_SetAccountSourceRequest_AccountName.MatchString(this.AccountName) {
-		return github_com_mwitkow_go_proto_validators.FieldError("AccountName", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.AccountName))
-	}
-	if !_regex_SetAccountSourceRequest_Source.MatchString(this.Source) {
-		return github_com_mwitkow_go_proto_validators.FieldError("Source", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Source))
-	}
-	return nil
-}
-func (this *SetAccountSourceResponse) Validate() error {
-	if this.Account != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Account); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Account", err)
-		}
-	}
-	return nil
-}
-func (this *DeleteAccountRequest) Validate() error {
-	return nil
-}
-func (this *DeleteAccountResponse) Validate() error {
-	return nil
-}
-func (this *GetAccountNamesRequest) Validate() error {
-	return nil
-}
-func (this *GetAccountNamesResponse) Validate() error {
-	return nil
-}
-
-var _regex_GetAccountNamesRegexRequest_Regex = regexp.MustCompile(`^.{1,225}$`)
-
-func (this *GetAccountNamesRegexRequest) Validate() error {
-	if !_regex_GetAccountNamesRegexRequest_Regex.MatchString(this.Regex) {
-		return github_com_mwitkow_go_proto_validators.FieldError("Regex", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Regex))
-	}
-	return nil
-}
-func (this *GetAccountNamesRegexResponse) Validate() error {
-	return nil
-}
-
-var _regex_SetUserAccountRequest_UserEmail = regexp.MustCompile(`^.{1,225}$`)
-var _regex_SetUserAccountRequest_AccountName = regexp.MustCompile(`^.{1,225}$`)
-
-func (this *SetUserAccountRequest) Validate() error {
-	if !_regex_SetUserAccountRequest_UserEmail.MatchString(this.UserEmail) {
-		return github_com_mwitkow_go_proto_validators.FieldError("UserEmail", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.UserEmail))
-	}
-	if !_regex_SetUserAccountRequest_AccountName.MatchString(this.AccountName) {
-		return github_com_mwitkow_go_proto_validators.FieldError("AccountName", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.AccountName))
-	}
-	return nil
-}
-func (this *SetUserAccountResponse) Validate() error {
+func (this *SetPlanResponse) Validate() error {
 	if this.User != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
@@ -283,30 +185,51 @@ func (this *SetUserAccountResponse) Validate() error {
 	return nil
 }
 
-var _regex_IncAccountPlanUsageRequest_AccountName = regexp.MustCompile(`^.{1,225}$`)
-var _regex_IncAccountPlanUsageRequest_Plan = regexp.MustCompile(`^.{1,225}$`)
+var _regex_SetSourceRequest_Email = regexp.MustCompile(`^.{1,225}$`)
+var _regex_SetSourceRequest_Source = regexp.MustCompile(`^.{1,225}$`)
 
-func (this *IncAccountPlanUsageRequest) Validate() error {
-	if !_regex_IncAccountPlanUsageRequest_AccountName.MatchString(this.AccountName) {
-		return github_com_mwitkow_go_proto_validators.FieldError("AccountName", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.AccountName))
+func (this *SetSourceRequest) Validate() error {
+	if !_regex_SetSourceRequest_Email.MatchString(this.Email) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Email", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Email))
+	}
+	if !_regex_SetSourceRequest_Source.MatchString(this.Source) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Source", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Source))
+	}
+	return nil
+}
+func (this *SetSourceResponse) Validate() error {
+	if this.User != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
+		}
+	}
+	return nil
+}
+
+var _regex_IncPlanUsageRequest_Email = regexp.MustCompile(`^.{1,225}$`)
+var _regex_IncPlanUsageRequest_Plan = regexp.MustCompile(`^.{1,225}$`)
+
+func (this *IncPlanUsageRequest) Validate() error {
+	if !_regex_IncPlanUsageRequest_Email.MatchString(this.Email) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Email", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Email))
 	}
 	if !(this.Increment > 0) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Increment", fmt.Errorf(`value '%v' must be greater than '0'`, this.Increment))
 	}
-	if !_regex_IncAccountPlanUsageRequest_Plan.MatchString(this.Plan) {
+	if !_regex_IncPlanUsageRequest_Plan.MatchString(this.Plan) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Plan", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Plan))
 	}
 	return nil
 }
-func (this *IncAccountPlanUsageResponse) Validate() error {
+func (this *IncPlanUsageResponse) Validate() error {
 	return nil
 }
 
-var _regex_ChargeAccountRequest_AccountName = regexp.MustCompile(`^.{1,225}$`)
+var _regex_ChargeRequest_Email = regexp.MustCompile(`^.{1,225}$`)
 
-func (this *ChargeAccountRequest) Validate() error {
-	if !_regex_ChargeAccountRequest_AccountName.MatchString(this.AccountName) {
-		return github_com_mwitkow_go_proto_validators.FieldError("AccountName", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.AccountName))
+func (this *ChargeRequest) Validate() error {
+	if !_regex_ChargeRequest_Email.MatchString(this.Email) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Email", fmt.Errorf(`value '%v' must be a string conforming to regex "^.{1,225}$"`, this.Email))
 	}
 	if !(this.Amount > 0) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Amount", fmt.Errorf(`value '%v' must be greater than '0'`, this.Amount))
@@ -314,7 +237,7 @@ func (this *ChargeAccountRequest) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
-func (this *ChargeAccountResponse) Validate() error {
+func (this *ChargeResponse) Validate() error {
 	return nil
 }
 
