@@ -42,7 +42,7 @@ func NewClient(db *badger.DB, apiKey string, directionsExpiration time.Duration)
 
 func (c *Client) Directions(ctx context.Context, origin *api.Point, dest *api.Point, mode maps.Mode) ([]maps.Route, error) {
 	res, err := c.getCachedDirections(origin, dest, mode)
-	if err != nil {
+	if err != nil && err != badger.ErrKeyNotFound{
 		return nil, err
 	}
 	if res != nil && len(res.Routes) > 0 {
@@ -68,7 +68,7 @@ func (c *Client) Directions(ctx context.Context, origin *api.Point, dest *api.Po
 
 func (c *Client) GetAddress(point *api.Point) (*api.Address, error) {
 	addr, err := c.getCachedAddress(point)
-	if err != nil {
+	if err != nil && err != badger.ErrKeyNotFound {
 		return nil, err
 	}
 	if addr != nil && addr.Address != "" {
@@ -120,7 +120,7 @@ func (c *Client) GetAddress(point *api.Point) (*api.Address, error) {
 
 func (c *Client) GetTimezone(point *api.Point) (string, error) {
 	zone, err := c.getCachedTimezone(point)
-	if err != nil {
+	if err != nil && err != badger.ErrKeyNotFound {
 		return "", err
 	}
 	if zone != "" {
@@ -169,7 +169,7 @@ func (c *Client) TravelDetail(ctx context.Context, here, there *api.Point, mode 
 
 func (c *Client) GetCoordinates(address string) (*api.Point, error) {
 	point, err := c.getCachedCoordinates(address)
-	if err != nil {
+	if err != nil && err != badger.ErrKeyNotFound{
 		return nil, err
 	}
 	if point != nil {
@@ -315,7 +315,7 @@ func (c *Client) getCachedTimezone(point *api.Point) (string, error) {
 		return "", err
 	}
 	res, err := item.ValueCopy(nil)
-	if err != nil {
+	if err != nil && err != badger.ErrKeyNotFound {
 		return "", err
 	}
 	return string(res), nil

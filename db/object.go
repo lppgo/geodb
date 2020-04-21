@@ -36,9 +36,9 @@ func Set(db *badger.DB, maps *maps.Client, hub *stream.Hub, obj *api.Object) (*a
 			go func(val *api.Object, tracker *api.ObjectTracker) {
 				defer wg.Done()
 				txn := db.NewTransaction(false)
-
 				item, err := txn.Get([]byte(tracker.GetTargetObjectKey()))
 				if err != nil {
+					log.Error(err.Error())
 					return
 				}
 				res, err := item.ValueCopy(nil)
@@ -49,9 +49,6 @@ func Set(db *badger.DB, maps *maps.Client, hub *stream.Hub, obj *api.Object) (*a
 				var obj = &api.ObjectDetail{}
 				if err := proto.Unmarshal(res, obj); err != nil {
 					log.Error(err.Error())
-					return
-				}
-				if obj.Object.Point == nil {
 					return
 				}
 				point2 := geo.NewPointFromLatLng(obj.Object.Point.Lat, obj.Object.Point.Lon)
@@ -65,7 +62,7 @@ func Set(db *badger.DB, maps *maps.Client, hub *stream.Hub, obj *api.Object) (*a
 				if maps != nil && val.Tracking != nil {
 					directions, eta, dist, err := maps.TravelDetail(context.Background(), val.Point, obj.Object.Point, helpers.ToTravelMode(val.GetTracking().GetTravelMode()))
 					if err != nil {
-						log.Error(err.Error())
+						return
 					} else {
 						trackerEvent.Direction = &api.Directions{}
 						if tracker.TrackDirections {
