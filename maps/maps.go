@@ -42,7 +42,7 @@ func NewClient(db *badger.DB, apiKey string, directionsExpiration time.Duration)
 
 func (c *Client) Directions(ctx context.Context, origin *api.Point, dest *api.Point, mode maps.Mode) ([]maps.Route, error) {
 	res, err := c.getCachedDirections(origin, dest, mode)
-	if err != nil && err != badger.ErrKeyNotFound{
+	if err != nil && err != badger.ErrKeyNotFound {
 		return nil, err
 	}
 	if res != nil && len(res.Routes) > 0 {
@@ -169,7 +169,7 @@ func (c *Client) TravelDetail(ctx context.Context, here, there *api.Point, mode 
 
 func (c *Client) GetCoordinates(address string) (*api.Point, error) {
 	point, err := c.getCachedCoordinates(address)
-	if err != nil && err != badger.ErrKeyNotFound{
+	if err != nil && err != badger.ErrKeyNotFound {
 		return nil, err
 	}
 	if point != nil {
