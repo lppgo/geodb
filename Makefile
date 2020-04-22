@@ -1,4 +1,4 @@
-version := 0.0.26
+version := 0.1.2
 .DEFAULT_GOAL := help
 
 .PHONY: help
