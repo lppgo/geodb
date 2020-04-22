@@ -315,7 +315,7 @@ func (c *Client) getCachedTimezone(point *api.Point) (string, error) {
 		return "", err
 	}
 	res, err := item.ValueCopy(nil)
-	if err != nil {
+	if err != nil && err != badger.ErrKeyNotFound {
 		return "", err
 	}
 	return string(res), nil
